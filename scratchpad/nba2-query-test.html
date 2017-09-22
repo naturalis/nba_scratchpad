@@ -1,0 +1,873 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+<link rel="shortcut icon" href="css/5028-512.png">
+
+<script src="js/jquery-3.2.1.min.js"></script>
+<script src="js/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+<script src="js/jquery.scrollTo-2.1.2/jquery.scrollTo.min.js"></script>
+<script src="js/jstorage.js"></script>
+<script src="js/md5/md5.js"></script>
+<script src="js/json2.js"></script>
+<script src="js/system.js"></script>
+<script src="js/servers.js"></script>
+<script src="js/services.js"></script>
+<script src="js/defaultRestServiceList.js"></script>
+<script src="js/datamodels.js"></script>
+<script src="js/bootstrap.js"></script>
+<script src="js/nba-query-test.js"></script>
+<script src="js/request.js"></script>
+<script src="js/query-window.js"></script>
+<script src="js/query-import-export.js"></script>
+<script src="js/notes.js"></script>
+<script src="js/tools.js"></script>
+<script src="js/inline_templates.js"></script>
+<script src="js/config.js"></script>
+<script src="js/loader.js"></script>
+<script src="js/timer.js"></script>
+<script src="js/results.js"></script>
+<script src="js/hashes.js"></script>
+<script src="js/jsonpath-0.8.0.js"></script>
+<script src="js/xpathjson.js"></script>
+
+<link rel="stylesheet" type="text/css" media="screen" title="default" href="css/inline_templates.css" />
+<link rel="stylesheet" type="text/css" media="screen" title="default" href="css/jquery-ui.css" />
+<link rel="stylesheet" type="text/css" media="screen" title="default" href="css/style.css" />
+<link rel="stylesheet" type="text/css" media="screen" title="default" href="css/custom-styles.css" />
+
+<script>
+$(document).ready(function(e)
+{
+	if (!checkMinimalRequirements()) return;
+
+	disablePage();
+	setApplicationInfo();
+	acquireInlineTemplates();
+	initServers();
+	populateServers();
+	setServer();
+	getServices();
+	addStaticServices();
+	populateServices();
+	setService();	
+	getDataModels();
+	displayFullUrl();
+	setServerStatusLink();
+	setServerSelectTitle();
+	bootstrapQueryWindow();
+	bootstrapResultWindow();
+	bootstrapSupportWindows();
+	bindDocumentFieldsSearchKeyUp();
+	checkSaveWithServiceToggle();
+	checkDocumentFieldsIncludeExtras();
+	checkDocumentFieldsShowAll();
+	enableCtrlSToggle();
+	usePOSTmethodToggle();
+	suppressOutputToggle();
+	populatePurlAcceptHeaders();
+	bindKeys();
+
+	if (!$.jStorage.storageAvailable())
+	{
+		alert("no local storage available.\ncannot save or use saved queries.\n(but you can still write and execute them)");
+	}
+	else
+	{
+		storageCleanUp();
+		getQueryIndex();
+		checkExampleQueries();
+		drawQueryIndex();
+	}
+
+	enablePage();
+	togglePurlAcceptHeaders();
+});
+</script>
+</head>
+<body>
+<form>
+
+	<div id="top">
+		<div id="serversandservices">
+			<select id="servers" alt-title="server list" title="server list" onchange="
+				disablePage();
+				rememberSelectedService();
+				setServer();
+				displayFullUrl();
+				setServerStatusLink();
+				setServerSelectTitle();
+				getServices();
+				addStaticServices();
+				populateServices();
+				setService();
+				getDataModels();
+				bootstrapResultWindow();
+				recallSelectedService();
+				enablePage();
+				togglePurlAcceptHeaders();"
+				accesskey="q"></select>
+			<select title="service list" onchange="setService();displayFullUrl();" id="services" accesskey="w"></select>
+			<a title="server status" href="" id="serverStatus" target="_new">check server status</a>
+			<span title="last server http response code" class="hint" style="margin-left:10px" id="serverResponseCode"></span>
+		</div>
+		<span id="message"></span>
+	</div>
+
+	<div id="left">
+		<textarea title="query window" id="query" placeholder="query" accesskey="a"></textarea><br />
+		<input title="execute query" type="button" id="query-trigger" value="execute query" onclick="runQuery()"/>
+		<span title="execute query alternative" class="hint">(or Ctrl+Enter)</span> <span class="divider">|</span>		
+		<span title="query window manipulation">
+			<input type="text" title="type to find field name" id="documentFieldsSearch" placeholder="type field name" class="documentFieldsSearch" accesskey="z" /> 
+			<input type="checkbox" id="documentFieldsIncludeExtras" onchange="checkDocumentFieldsIncludeExtras();$('#documentFieldsSearch').trigger('keyup');" accesskey="x" class="invisible-checkbox"/>
+			<label title="include datatypes and analyzers in search" for="documentFieldsIncludeExtras">
+				<span class="document-fields-include-extras check-box-label check-box-label-on">&#9744;</span>
+				<span class="document-fields-include-extras check-box-label check-box-label-off">&#9745;</span>
+			</label>
+
+			<input type="checkbox" id="documentFieldsShowAll" onchange="checkDocumentFieldsShowAll();$('#documentFieldsSearch').trigger('keyup');" accesskey="c" class="invisible-checkbox"/>
+			<label title="show fields for all document types" for="documentFieldsShowAll">
+				<span class="document-fields-show-all check-box-label check-box-label-on">&#9744;</span>
+				<span class="document-fields-show-all check-box-label check-box-label-off">&#9745;</span>
+			</label>
+		</span>
+		<span class="divider">|</span>
+			<span title="add slashes" class="link" onclick="addSlashes();"/>add slashes</span> <span class="divider">|</span>
+			<span title="decode query" class="link" onclick="decodeQuery();"/>decode query</span> <span class="divider">|</span>
+			<span title="copy query" class="link" ondblclick="copyJIRAQueryToClipboard();setMessage('copied query for JIRA to clipboard');" onclick="copyQueryToClipboard();setMessage('copied query to clipboard');"/>copy query</span><span
+				title="copy query +" class="link" onclick="copyCompleteRequestToClipboard();setMessage('copied all request elements to clipboard');"/>&nbsp;+&nbsp;</span><span class="divider">|</span>
+			<span title="clear query (or Ctrl+F7)" alt-title="clear query" class="link" onclick="clearQuery();showCaretPosition();"/>clear</span> <span class="divider">|</span>
+			<span title="cursor position" class="hint" id="cursor-position">[0,0]</span>
+		</span>
+		<br />
+		<textarea title="resulting URL" id="resultQuery"  accesskey="v"></textarea>
+		<br />
+		<input title="run altered query" type="button" onclick="setCustomRequest();openRequest();" value="run altered query"/>
+		<span title="query run options" class="results">
+			<a title="open in new window" class="resultUrl" href="" target="_blank">open in new window</a> <span class="divider">|</span>
+			<a title="open in same window" class="resultUrl" href="" id="thisUrl" target="nbaTest">open in same window</a> <span class="divider">|</span>
+			<span title="clear results" class="link" onclick="clearResults();" />clear results</span> <span class="divider">|</span>
+			<span title="copy URL" class="link" onclick="copyToClipboard($('#thisUrl').attr('href'));setMessage('copied link to clipboard');" />copy URL</span>
+			
+			<span class="localresults">
+				<span class="divider">|</span>
+				<span title="copy results" class="link"
+					onclick="if( resultsCopyToClipboard() ) { setMessage('copied result to clipboard'); } else { setMessage( 'result too large for automated copying' ); }" 
+					ondblclick="if( resultsCopyJIRAToClipboard() ) { setMessage('copied result for JIRA to clipboard'); } else { setMessage( 'result too large for automated copying' ); }" 
+				/>copy results</span>
+				<span class="divider">|</span>
+				<input type="text" id="resultSearch" placeholder="type to search results" onkeyup="resultsFindAndScroll();"/>
+				<span class="link" onclick="resultsFindAndScroll('up');">&uarr;</span>
+				<span class="link" onclick="resultsFindAndScroll('down');">&darr;</span>
+				<span class="hint">
+					<span id="resultSearchCount" title="total number found">0</span>
+					[<span id="resultSearchLine" title="current line">0</span>]
+				</span>
+				<span class="divider">|</span>
+				<span class="link" id="JSONpathToggle" onclick="$('.JSONpath').toggle();JSONresultPosition();" title="search by XPath for JSON">xJSON</span>
+			</span>
+			<div class="JSONpath JSONpathControls" >
+				<input
+					type="text" 
+					id="JSONpath" 
+					placeholder="XPath for JSON (double click for $.resultSet[*], usually a good start)" 
+					style="width:70%" 
+					onkeyup="findJSONpath();"
+					ondblclick="JSONpathDblClick();"
+					/>
+				<a class="no-underline" href="http://goessner.net/articles/JsonPath/" target="_blank" title="XPath for JSON FAQ">?</a>
+			</div>
+		</span>
+		
+		<br />
+
+		<iframe title="result frame" id="iframe" src="" style="background-color:#fff;"></iframe>
+		<div title="result frame" id="localresults" class="localresults"></div>
+		
+		<br />
+		<span class="version">
+			<span class="appName"></span> (<span class="appVersion"></span>; <span class="appDate"></span>) | 
+			<span class="appAuthor"></span> <a href="" class="email appEmail">&#9993;</a> | 
+			<span title="toggle help (F2 also works)" onclick="helpToggle();" class="link">help</span> | 
+			<span title="toggle links (F4 also works)" onclick="linksToggle();" class="link">links</span>
+		</span>
+	</div>
+
+	<div id="right">
+		<input title="query name to save" type="text" id="queryName" value="" placeholder="name of query to save (max. 64 chars)" maxlength="64" />
+		<input type="checkbox" id="saveWithService" onchange="checkSaveWithServiceToggle();" checked="checked" class="invisible-checkbox" />
+		<label title="save including service" for="saveWithService">
+			<span class="save-with-service check-box-label check-box-label-on">&#9744;</span>
+			<span class="save-with-service check-box-label check-box-label-off">&#9745;</span>
+		</label>
+		<input title="save query" type="button" value="save" onclick="hideExportOptionsWindow();saveQuery();getQueryIndex();drawQueryIndex();highlightFreshQuery();" />
+		<span title="clear query name" onclick="$('#queryName').val('');" class="symbol link" title="clear query name">x</span>
+		<p>
+			saved queries:
+			<ul title="saved queries" id="queries" class="queries">
+			</ul>
+
+			<span class="symbol link export" onclick="$('.export').toggle();exportQueryCount();" title="query maintenance">&#9660;</span>
+			<div class="export options" id="exportOptions">
+				<span class="symbol link" onclick="$('.export').toggle();" title="query maintenance">&#9650;</span>
+				<div class="links">
+					<span class="setting link" title="export selected queries" onclick="queryExport();">export selected queries</span><br />
+					<span class="setting link" title="import queries" onclick="queryImport();">import queries</span><br />
+					<span class="setting link" title="delete selected queries" onclick="queryDeleteSelected();">delete selected queries</span><br />
+					<span class="setting link additional" title="select all" onclick="exportQueryToggleAll(true);">select all</span> / 
+					<span class="setting link additional" title="select none" onclick="exportQueryToggleAll(false);">none</span>
+					<span class="setting additional">(<span class="export-query-count">0</span>)</span>
+					
+					<hr />
+
+					<span class="setting link" title="toggle query window context menu" onclick="queryWindowContextToggle();">toggle context menu</span><br />
+					<span class="setting link" id="timerToggle" onclick="timerToggle();" title="query timer">toggle timer</span><br />
+					<span class="setting link" id="hashesToggle" onclick="hashesToggle();" title="output hashes">toggle output hashes</span><br />
+
+					<input type="checkbox" id="enableCtrlS" onchange="enableCtrlSToggle();"  class="invisible-checkbox" />
+					<label title="enable Ctrl+s" for="enableCtrlS">
+						<span class="enable-ctrl-s check-box-label check-box-label-on">&#9744;</span>
+						<span class="enable-ctrl-s check-box-label check-box-label-off">&#9745;</span>
+						<span class="setting link" onchange="enableCtrlSToggle();">ctrl+s saves query</span>
+					</label><br />
+					
+					<input type="checkbox" id="suppressOutput" onchange="suppressOutputToggle();" class="invisible-checkbox" />
+					<label title="suppress output" for="suppressOutput">
+						<span class="suppress-output check-box-label check-box-label-on">&#9744;</span>
+						<span class="suppress-output check-box-label check-box-label-off">&#9745;</span>
+						<span class="setting link" onchange="suppressOutputToggle();">suppress output (cross-domain servers only)</span>
+					</label><br />
+
+					<hr />
+
+					<input type="checkbox" id="usePOSTmethod" onchange="usePOSTmethodToggle();"  class="invisible-checkbox" />
+					<label title="use POST method" for="usePOSTmethod">
+						<span class="enable-post check-box-label check-box-label-on">&#9744;</span>
+						<span class="enable-post check-box-label check-box-label-off">&#9745;</span>
+						<span class="setting link" onchange="usePOSTmethodToggle();">use POST (if server and service allow it)</span>
+					</label><br />
+					
+					<span class="setting link" id="hashesToggle" onclick="hashesToggle();" title="output hashes">use content type:</span>
+					<select id="contentEncoding" class="">
+						<option value="">(default)</option>
+						<option value="application/json;charset=UTF-8">application/json;charset=UTF-8</option>
+						<option value="application/x-www-form-urlencoded">application/x-www-form-urlencoded</option>
+					</select>
+					
+					<div id="purlAcceptHeaderSelection">
+						<span class="setting">set specific request headers:</span><br />
+						<div style="margin-top:2px;">
+							<select id="purlAcceptHeaders" class="purl-input"></select><span class="symbol link add-accept-header" onclick="addAcceptHeader();drawAcceptHeaderString();"> + </span>
+							<input class="purl-input" type="text" id="customAcceptHeader" placeholder="type custom MIME-type" /><span class="symbol link add-accept-header" onclick="addAcceptHeader(true);drawAcceptHeaderString();"> + </span>
+						</div>
+						<span id="purlAcceptHeaderString"></span><span onclick="selectedAcceptHeaders.length=0;drawAcceptHeaderString();" class="symbol link clear-accept-headers" style="display:none;"> x </span>
+					</div>
+				</div>
+			</div>
+		</p>
+		
+		<p>
+			<div class="timer" id="timer"></div>
+		</p>
+		
+		<p>
+			<div class="hashes" id="hashes"></div>
+		</p>
+		
+		<div id="notesDiv">
+			<span title="note title" id="notesName"></span> <span id="notesSize" class="symbol"></span>
+			<a id="dynamicNotesOutLink" title="open link" href="" target="_blank" class="symbol">&#8599;</a>	
+			<span title="close note" class="link notesClose" onclick="notesClose();">X</span>
+			<textarea title="notes input area" id="notes" onkeyup="setNoteSize();detectLinkInNotes();" onselect="detectLinkInNotes();" onmouseup="detectLinkInNotes();"></textarea>
+			<input title="save notes" type="button" class="notesButton" onclick="saveNotes();" value="save notes">
+			<span title="insert timestamp" class="link" onclick="insertStringInNotes('%date%')">insert timestamp</span> |
+			<span title="insert line" class="link" onclick="insertStringInNotes('%line%')">insert line</span>
+		</div>
+
+	</div>
+
+</form>
+
+<div id="helpDiv">
+	<div id="helpHeader">
+		<span class="helpHeader">help</span> <span class="link windowClose" onclick="helpToggle();">X</span><br />
+	</div>
+	<div id="helpBody">
+		<p class="helpSubHeader">
+			you can click and drag the header of this window to move it to a position of your liking. click the X top right to close. click and hold the bold topics to highlight the corresponding item in the form.
+		</p>
+		<p>
+			<b class="section-header">general</b><br />
+			this tool allows you to build an NBA-query and execute it by accessing the URL. several different servers and services are maintained in the configuration files, and you can store your own queries locally. these queries are stored in the local storage of your browser, and will survive across sessions (and emptying your cache, most likely). they do not work in private sessions
+			and are not available across different browsers, so if you have queries you really want to hang on to, make sure to save them somewhere else as well.
+		</p>
+		<p>
+			<b class="section-header">writing & running queries</b><br />
+			<b>server list</b><br />
+			list of servers that run the NBAv2 in some form. the default list of servers is in the file <code>js/services.js</code>; if you want to add extra servers, please do so in <code>js/config.js</code> (see instructions there). pressing the up or down arrow while holding the alt-key will change the selected server.
+		</p>
+		<p>
+			<b>service list</b><br />
+			list of services available in NBAv2. each item shows the actual path of the query, an optional [name] and an optional %-sign to indicate that the service requires html-encoded queries, or a - to indicate that a service doesn't expect a query. you can add to the list of services in <code>js/config.js</code>; see instructions there.<br />
+			note: the %-sign is just for information - you don't have to do any encoding yourself; the application will take care of it.<br />
+			the list of services is automatically retrieved from the current server, using the URL specified in <code>nbaServerConfig.metaServiceUrls.restServices</code>. if that URL returns no data (it currently works through an external proxy that cannot "see" your localhost), the application looks for the file <code>js/defaultRestServiceList.js</code> for a backup default list of services. make sure the file is up to date! you can just copy the source from the corresponding REST-service into the Javascript-file.
+		</p>
+		<p>
+			<b>server status</b><br />
+			link to the root of the selected NBA-server, shows the status page of the server (opens in a new window). page usually also displays version info.
+		</p>
+		<p>
+			<b>query window</b><br />
+			window to specify the query you want to run. this can be either a JSON-object (for querySpec-queries) or a query-string (for human readable queries). specify just the actual query, not the rest of the URL (or the ?) - these are inferred from the values selected in the <b>server list</b> and the <b>service list</b>. when you first open this page, two example queries will be automatically added to the list of <b>saved queries</b> to give you an idea what they should look like.<br />
+			queries can be spread across multiple lines (for readability). empty lines will be ignored, and lines that start with one of these character(s): <span id="exampleCommentChars"></span>  will be treated as comment and ignored.
+		</p>
+		<p>
+			<b>execute query</b>
+			<br />
+			click the <b>execute query</b>-button to run your query. when you click the button, the application will:
+			<ol>
+				<li>take the selected entry from the <b>server list</b>;</li>
+				<li>take the selected entry from the <b>service list</b>;</li>
+				<li>if the service requires a query, take the contents of the <b>query window</b>, and encode them if required (if the selected service does not require a query, the contents of the query window are ignored);</li>
+				<li>put them all together to turn it into a NBA-query in the form of a URL;</li>
+				<li>print that URL in the <b>resulting URL</b> window;</li>
+				<li>execute the query by setting it as the source-attribute of the <b>result frame</b>;</li>
+			</ol>
+			the URL is opened and the subsequent results displayed in the <b>result frame</b>.<br />
+			notes:<br />
+			(1) the application does not check whether the combined server+service+query actually makes sense. if for instance you combine a JSON-query with a human readale service, the application will open the URL to the NBA all the same, which will generate an error as output.<br />
+			(2) the application does not check in any way whether the query is legal; you can enter anything you like. there is no predefined field list, and the application does not balance brackets (alas).<br />
+			(3) mouse-aversive users can also execute a query by pressing Ctrl+enter (works globally).
+		</p>
+		<p>
+			<b>query window manipulation</b><br />
+			<b class="section-sub-header no-top-margin">inserting query-elements</b><br />
+			right-click in the <b>query window</b> to see the <b>edit</b>, <b>insert code</b> and <b>insert logical operator</b> menus. hover over the menu title to access each menu's options. 
+			select and click an item from <b>insert code</b> to insert it into the <b>query window</b> at the cursor position, or over the selected text. 
+			<b>insert logical operator</b> works in the same way. the list of code bits and of operators are in <code>js/services.js</code>. if you want to add to the list of code-samples or operators, please do so in <code>js/config.js</code>.<br />
+
+			<b class="section-sub-header">finding document fields</b><br />
+			type the (partial) name of a field in the <b>type to find field name</b>-input to find a field. as you type, a droplist will appear displaying all fields matching your search term (type a space to see all available fields). only fields that match the document type of the selected service will be displayed. click an item to insert it into the <b>query window</b> at the cursor position,  or over the selected text. the droplist items include the name of the document type, as well as the fields' datatype and analyzers; these won't be inserted into the query window).<br />
+			fields are matched with each part of your search string, which is split by spaces. for instance, searching for <i>ers gath name</i> will match every line that has the strings 'ers', 'gath' and 'name' anywhere in their name, such as "<u>gath</u>eringEvent.gatheringP<u>ers</u>ons.full<u>Name</u>".<br />
+			by default, datatypes and operators are excluded from the search process; by checking <b>include datatypes and analyzers in search</b> you can include them in your search (for instance if you are looking for a field of a specific datatype). check <b>show fields for all document types</b> to see results for all document types, not just the one corresponding with the selected service.<br />
+			the lists of fields and operators are automatically retrieved from the current server, using the URLs specified in <code>nbaServerConfig.metaServiceUrls</code>. currently, this is done through an external proxy that cannot "see" your localhost (and possibly internal networks). if the application fails to retrieve either, this function will be unavailable.
+			<br />
+			<b class="section-sub-header">manipulating text in query window</b><br />
+			use <b>add slashes</b> to add slashes to all double-quotes in the selected text in the <b>query window</b>. hold down Ctrl while clicking to also remove newlines and replace multiple spaces by single ones.<br />
+			use <b>decode query</b> to decode the contents of the <b>query window</b>, useful when you want to investigate a query but only have the full url.<br />
+			to copy the query to the clipboard, click <b>copy query</b>. double clicking does the same and additionally adds <code>{noformat}</code> tags around the copied 
+			content for readable pasting into JIRA.<br />
+			click <b>copy query +</b> to copy all query elements to the clipboard. (note: holding down Ctrl while clicking any of the copy-links will additionally log the copied content to the browsers's console).<br />
+			to clear the <b>query window</b>, click <b>clear query</b>.<br />
+			if the query window has focus, use Ctrl + F11 to insert a comment char in query-window at the cursor; also works on multiple selected lines (adds them at the beginning of each line), and Ctrl + F12 to enclose selected text in the query-window in double quotes; also works with multiple words (detects word boundaries).
+		</p>
+		<p>
+			<b>resulting URL</b> & <b>run altered query</b><br />
+			the <b>resulting URL</b>-window shows the resulting URL that the application sends to the NBA. you can directly edit the URL and execute the result by clicking <b>run altered query</b>. this is intended for quick debugging purposes; please note that your edits will be lost the next time you run <b>execute query</b>.
+		</p>
+		<p>
+			<b>query run options</b> (available once you have executed a query)<br />
+			<b>open in new window</b>: opens the last executed URL in a new browser window; always opens a new window.
+			<b>open in same window</b>: opens the last executed URL in a new browser window, then re-uses that window when you click the link again (avoid browser-tab overload).
+			<b>clear results</b>: clear the <b>result frame</b> (ctr+del does the same).
+			<b>copy URL</b>: copies the last executed URL to the windows clipboard (not sure about mac/linux). please note that these three work with the last URL that was <i>actually executed</i>. if you change something in <b>resulting URL</b> but do not execute the result, these three links will use the last URL that was (hence their absence when you first open the page).
+		</p>
+		<p>
+			<b>result frame</b><br />
+			result page from the NBA-server. whether your browser's JSON-plugin will render the output as formatted JSON depends on your browser and plugin. firefox with <a href="https://jsonview.com/" target="_new">JSONview</a> works fine.<br />
+			if you can't get it to work in the frame, and get tired of repeatedly clicking <b>open in new window</b> or <b>open in same window</b>, you can tell the application to always open the results in a separate browser window by opening <code>js/config.js</code> and setting the variable <code>alwaysRunQueryInOwnWindow</code> to <code>true</code>. subsequently, the application will always (also) open the results in a separate browser. it will re-use the same window, so you can move the tab to a new window, and position it so it remains visible in your workspace while you create your queries.<br />
+			note: as the result frame is technically a different browser, the application is unable to automate selecting all text and copying it to the clipboard. to save results somewhere, you'll have to manually select and copy the output.
+		</p>
+		<p>
+			<b class="section-header">saving queries and executing saved queries</b><br />
+			<b>query name to save</b><br />
+			enter the name under which you want to save your query. max. length is 64 characters. you can clear the input by clicking the <b>clear query name</b>-symbol.<br />
+			prefix your query with a name between straight bracket to create a group of queries. creating queries <code>[TEST] query a</code> and <code>[TEST] query b</code> will create a group called 'TEST' containing queries 'query a' and 'query b'. you can collapse groups in the query list, which helps maintain overview.
+		</p>
+		<p>
+			<b>save query</b><br />
+			click <b>save query</b> to save the content of the <b>query window</b> with the <b>query name to save</b>. the application will also save a reference to the service that is selected in the <b>service list</b> at the moment you save the query. if, for whatever reason, you don't want the service to be saved as well, uncheck the <b>save including service</b> checkbox before you click save.<br />
+			the query will be saved in your local browser storage, and will remain available across sessions. if you choose a name that already exists, the application will <u>overwrite</u> the existing query without warning.<br />
+			the application will show a message stating the result of the save action, above the query name-input (<a href="#" onclick="setMessage('hi there!');return false;">see what a message looks like</a>). it will also automatically update the list of <b>saved queries</b>.<br />
+			please note, the application <i>only</i> saves the query and the service, <u>not</u> the server. so if you load a saved query, you'll have to manually select the appropriate server to run it against.
+		</p>
+		<p>
+			<b>saved queries</b><br />
+			list of saved queries. legend to the various symbols:
+		</p>
+		<p class="inner-p"> 
+			<table class="symbolTable">
+				<tr>
+					<td><span class="symbol min-width-symbol">&larr;&mdash;</span></td>
+					<td>
+						load the saved query into the <b>query window</b> and set the saved service in the <b>service list</b>. hover over the symbol to see the name of the saved service. click while holding down Ctrl to cause the query to be executed after loading.
+					</td>
+				</tr>
+				<tr>
+					<td><span class="symbol min-width-symbol">&larr;&#8211;</span></td>
+					<td>
+						same, but for queries without a saved service (the selected service remains unchanged when you click this).
+					</td>
+				</tr>
+				<tr>
+					<td><span class="symbol min-width-symbol">x</span></td>
+					<td>delete the query (asks confirmation).</td>
+				</tr>
+				<tr>
+					<td><span class="symbol min-width-symbol">&uarr;</span></td>
+					<td>copy the query name to the <b>query name to save</b> input. handy when you want to overwrite an existing saved query.</td>
+				</tr>
+				<tr>
+					<td><span class="symbol min-width-symbol">&equiv;</span></td>
+					<td>open query notes (see below).</td>
+				</tr>
+				<tr>
+					<td><span class="symbol min-width-symbol">&#8795;</span></td>
+					<td>same, but query already has some saved notes (hint indicates notes' length).</td>
+				</tr>
+				<tr>
+					<td><span class="symbol min-width-symbol">&boxbox;</span></td>
+					<td>indicates a group of queries. click to expand. the number indicates the number of queries in the group.</td>
+				</tr>
+			</table>
+			when you load a saved query that includes a reference to a service that no longer exists, no service will be set. note that the path of the service is used as unique identifier; if, for some reason, you have different services with the exact same path, the one that comes first in the list will be the one that is set when loading. when you have no saved queries, the application automatically creates two example queries.
+		</p>
+		<p>
+			<b>query notes</b><br />
+			the application allows you to store notes with a query. click on one of the <span class="symbol link min-width-symbol">&equiv;</span>-symbols to open a popup with the notes for that query. you can have only one set of notes open at a given time. clicking a second <span class="symbol link min-width-symbol">&equiv;</span>-symbol while notes are already open will automatically save before opening the next set of notes. notes are deleted automatically when you delete the corresponding query.<br />
+			the <b>note title</b> is the same as the query the note belongs to. the number after the title indicates the size of the note (not sure if there's a maximum).<br />
+			type your text in the <b>notes input area</b> (which opens with existing notes if there are any) and click <b>save notes</b> to save the notes. to delete, clear the entire input and click save.<br />
+			click <b>insert timestamp</b> to insert the current date and time at the cursor position. click <b>insert line</b> to insert the current date and time at the cursor position. click <b>close note</b> to close the notes popup.<br />
+			if there's a valid URL in the notes, you can select it to make a clickable link-icon <span class="symbol">&#8599;</span> appear in the notes window's header (obviously an actual hyperlink would be more practical, but the notes are in a textarea, which doesn't render html).
+		</p>
+		<p>
+			<b>query maintenance</b><br />
+			click the <b>query maintenance</b>-icons (<span class="symbol">&#9660;</span> <span class="symbol">&#9650;</span>) to toggle the maintenance options.<br />
+			use <b>export selected queries</b> to export selected queries as a JSON-string. when you open <b>query maintenance</b>, checkboxes (<span class="symbol link off">&#9744;</span> <span class="symbol link on">&#9745;</span>) appear for each item in the <b>saved queries</b> list. use the <b>select all</b> and <b>select none</b> links to change the selection in bulk. select the queries you want to export, and click <b>export selected queries</b>. the corresponding JSON-string is written to the <b>query window</b> (notes, if any, are included. services are not). select and copy the JSON-string from the window and save it as backup in a regular txt-file, or share it with other users.<br />
+			paste an exported JSON-string into the <b>query window</b> and click <b>import queries</b> to import the queries. all queries are imported; if another query with the same name already exist, a number is added to the name of the newly imported query.<br />
+			use <b>delete selected queries</b> in combination with the checkboxes in the <b>saved queries</b> list to delete queries in bulk (after confirmation).<br />
+			toggle <b>enable Ctrl+s</b> to enable the use of ctrl+s for saving of the current query (content of the query window), using the name of the currently highlighted saved query (= the last one you loaded or saved). be aware, the program overwrites the stored query without warning, and there's no undo. functionality is turned off by default.
+		</p>
+		<p>
+			<b class="section-header">other</b><br />
+			click the <b>query timer</b> link in the footer menu to bring up the query execution timer. the timer counts the delay between the moment the full query is launched, and the moment the results come back (more precise, between the moment the src-attribute of the result frame is set, and the frame's onload-event is triggered). the timer also keeps an average if you execute the same query repeatedly.<br />
+			you can change the way this tool looks by creating a stylesheet <code>css/custom-styles.css</code> and adding your own styles.
+			
+		</p>
+		<p>
+			<b class="section-header">key bindings</b><br />
+			<ul>
+				<li>F2: open help-window (and close it again).</li>
+				<li>F4: brings up window with links (and close it again). custom links are maintained in <code>js/config.js</code>.</li>
+				<li>Esc: close help- and links-windows.</li>
+				<li>Alt+up/down: change selected item in the <b>server list.</b></li>
+				<li>Ctrl+enter: run query.</li>
+				<li>Ctrl+space: insert <span class="ctrl-space-number-of-spaces">2</span> spaces at cursor in query window (override in <code>js/config.js</code> by setting <code>ctrlSpaceNumberOfSpaces</code>).</li>
+				<li>Ctrl+F7: clear <b>query</b>.</li>
+				<li>Ctrl+F8: set focus on <b>query</b>.</li>
+				<li>Ctrl+F9: set focus on <b>type to find field name</b>.</li>
+				<li>Ctrl+F11: insert comment char <code class="active-comment-char"></code> at the beginning of the line in the query-window (works on multiple selected lines).</li>
+				<li>Ctrl+Shift+F11: remove comment char <code class="active-comment-char"></code> from begin of selected lines in the query-window.</li>
+				<li>Ctrl+F12: encloses selected text in query-window in double quotes; works with multiple words.</li>
+				<li>Alt+Del: clear the <b>result frame.</b></li>
+				<li>Ctrl+clicking <b>copy query</b>: dump info to browser console as well (works for all 'copy to clipboard' commands).</li>
+				<li>Ctrl+clicking <span class="symbol link min-width-symbol">&larr;&mdash;</span>: immediately run query after loading.</li>
+				<li>Ctrl+clicking <b>add slashes</b>: also removes newlines & multiple spaces.</li>
+				<li>Shift+clicking <b>add slashes</b>: removes slashes from \".</li>
+				<li>Ctrl+clicking datamodel entry: encloses value in double quotes when inserting.</li>
+				<li>Ctrl+s: save current query with highlighted query-name (disabled by default).</li>
+				<li class="no-dot divider"></li>
+				<li class="no-dot">access keys (shortcuts to page-elements):</li>
+				<li>q: <b>server list</b></li>
+				<li>w: <b>service list</b></li>
+				<li>a: <b>query window</b></li>
+				<li>z: <b>type to find field name</b></li>
+				<li>b: <b>include datatypes and analyzers in search</b>-toggle</li>
+				<li>c: <b>show fields for all document types</b>-toggle</li>
+				<li>v: <b>resulting URL</b>-window</li>
+				<li class="no-dot">(use on mac and windows by pressing Ctrl+Alt+[access key] in firefox or Alt+[access key] in chrome, or Ctrl+Alt+[access key] in either browser on linux)</li>
+			</ul>
+		</p>
+		<p>
+			<b class="section-header">about <span class="appName"></span></b><br />
+			this tool comes "as is", was developed using firefox 54.x (and haphazardly tested against chrome), and is currently not available in git. this is version <span class="appVersion"></span> (<span class="appDate"></span>). <a href="" class="email appEmail">suggestions for improvement welcome!</a>
+		</p>
+		<p class="versionHistory">
+			<b class="section-header">version history</b><br />
+			<ul id="version-history">
+				<li>v1 &hellip; 2.0 (nov/dec. 2016): initial versions.</li>
+				<li>v2.1 (2016.12.13): included help text.</li>
+				<li>v2.1.1 (2017.01.05): corrections to help text, added links pop-up.</li>
+				<li>v2.2 (2017.01.05): added code bits and operators.</li>
+				<li>v2.3 (2017.01.08): queries can be saved with corresponding service.</li>
+				<li>v2.3.1 (2017.01.09): fixed nested query arrow bug.</li>
+				<li>v2.3.2 (2017.01.09): moved message area to avoid width-issues; small style changes.</li>
+				<li>v2.3.3 (2017.01.12): added Ctrl+click = load & execute.</li>
+				<li>v2.3.4 (2017.01.16): fixed server status toggle bug.</li>
+				<li>v2.4 (2017.01.26): removed index numbers from, and added templates to server & service lists; added URL-awareness in notes' text; notes automatically change when a query is selected; notes window draggable; enabled copy to clipboard for query plus parameters; various  small changes.</li>
+				<li>v2.4.1 (2017.01.31): Alt+up/down changes selected server; Alt+delete clears the result window, plus link for the same; Ctrl+enter now works globally; escape closes help-window; added decode query function.</li>
+				<li>v2.4.2 (2017.02.09): added labels for links window.</li>
+				<li>v2.4.3 (2017.03.01): seperated config.js and services.js.</li>
+				<li>v2.4.4 (2017.03.02): added optional target to useful links. added additional tool <code>parse-mapping.html</code>. added 'add slashes'.</li>
+				<li>v2.5 (2017.03.09): added query export, import and bulk deletion.</li>
+				<li>v2.6 (2017.03.10): added datamodels & field-insert. removed 'insert' links from code bits and operator selectors.</li>
+				<li>v2.6.1 (2017.03.10): Ctrl+add slashes also removes newlines & multiple spaces.</li>
+				<li>v2.7 (2017.03.27): Ctrl+F11 inserts comment char in query-window, Ctrl+F12 encloses selected text in double quotes. Ctrl+F11 now also works on multiple selected lines. Ctrl+click datamodel entry adds "'s around inserted value. moved code- & operator-insert event to option onclick, so subsequent clicks on the same option also work. made config.js file entirely optional (all vars have defaults), added noExampleQueries option. datamodel-'type as you find' now works with partial & space-split search terms. Ctrl+F9 sets focus to field search input. fixed double-quote repeating strings enclosure bug.				</li>
+				<li>v2.8 (2017.05.01): doubleclick copy query encloses the copied query in {noformat} tags for JIRA. Alt+F11 removes comment chars.  moved code & operator selects to query window context menu. before executing, application removes superfluous comma's from the query. query is verified as valid JSON or not executed (can be overridden in <code>config.js</code>). cursor position (line, column) is displayed below the query-window (helps debugging JSON parse errors). list of document fields, allowed operators and analyzers is now retrieved dynamically from the selected server (through a remote proxy, for now). added 'search in Google' to query window context menu.				</li>
+				<li>v2.9 (2017.05.09): non-indexed fields are now excluded from document field search (including toggle). only searchable document fields that correspond with the selected service are shown (can be overridden). services are retrieved automatically from the server. page-elements are temporarily disabled while loading. bugfixes. 				</li>
+				<li>v2.10 (2017.05.15): removes "just brackets" query before executing a human readable service. version-info is retrieved from this table. user can (de)select query-groups. query names are htmlEncoded before being saved. allows for default list of services from file for situations in which the proxy cannot be reached.				</li>		
+				<li>v3.0 (2017.06.14): added some access keys. added <code>custom-styles.css</code> option. added query execution timer. Ctrl+space inserts multiple spaces. added querywindow context menu toggle (so you can turn off the browser's spelling checker). added Ctrl+s. added Shift+add slashes. added possibility of extra static services (in <code>config.js</code>), including option for non-standard port (for PURL). added different result window for cross-domain-enabled servers, incl. copying and searching in results. implemented direct server requests for all ajax services, with proxy as backup. added support for non-JSON and -html responses. added manual setting of accept headers. added GET/POST-switch. added http response code monitor. added possibility of suppressing output (useful for better query timing). added output hashes (to quicky see if output has changed). bugfixes.				</li>
+				<li>v3.1 (2017.07.18): added grouping in context code menu. added 'noServices' option to servers.</li>
+				<li>v3.2 (2017.09.05): operator list is generated automatically. added XPath for JSON functions. small fixes.</li>
+			</ul>
+		</p>
+
+		<p class="versionHistory">
+			<b class="section-header">to do</b><br />
+			<ul>
+				<li>download results as CSV</li>
+				<li>make servers editable through the interface (maybe some settings as well, and resized textarea sizes)</li>
+				<li>implement https://jqueryui.com/selectmenu/ for service-select (so it can be styled)</li>
+			</ul>
+		</p>
+
+		<p class="versionHistory">
+			<b class="section-header">known issues</b><br />
+			<ul>
+				<li>no paste option in query-window context menu</li>
+				<li>suppressing non-indexed fields in the suggestion list prohibits adding those fields to the "fields" parameter.</li>
+			</ul>
+		</p>
+	</div>
+</div>
+
+<div id="linksDiv">
+	<div id="linksHeader">
+		<span class="linksHeader">links</span> <span class="link windowClose" onclick="linksToggle();">X</span><br />
+	</div>
+	<div id="linksBody">
+		<ul id="linksLinks"></ul>
+	</div>
+</div>
+
+<div id="documentFieldSuggestions"></div>
+
+<div id="queryWindowContextMenu"></div>
+
+<div id="JSONpathResults" class="JSONpath">
+	<div id="JSONpathResultsHeader" class="header">
+		<span>JSONpath results</span>
+		<span class="divider">|</span>
+		<span class="link" onclick="copyJSONpathResultToClipboard(true);setMessage('copied XPath for JSON results to clipboard');">copy</span>
+		<span class="link windowClose" onclick="$('#JSONpathToggle').trigger('click');">X</span><br />
+	</div>
+	<pre id="JSONpathResultsContent" ondblclick="addElementToJSONpath();"></pre>
+</div>
+
+<div id="loader"><img src="css/default.svg"></div>
+
+
+<div class="inline-templates" id="serverTpl">
+<!--
+	<option title="%HINT%" value="%INDEX%" %SELECTED%>%LABEL%</option>
+-->
+</div>
+
+<div class="inline-templates" id="serviceTpl">
+<!--
+	<option value="%INDEX%" %SELECTED%>%PATH%&nbsp;&nbsp;&nbsp;%LABEL% %ENCODED%%NO_QUERY%%ORIGIN%</option>
+-->
+</div>
+
+<div class="inline-templates" id="serviceDisabledTpl">
+<!--
+	<option disabled="disabled" class="disabledOption">%LABEL%</option>
+-->
+</div>
+
+<div class="inline-templates" id="queryTpl">
+<!--
+	<li class="query" id="query-%NUMBER%" data-number="%NUMBER%">
+		<span title="use query with%SERVICE%" onclick="useQuery(%NUMBER%);highlightQuery(%NUMBER%);autoPullQueryTrigger();switchNotes(%NUMBER%);" class="symbol link use-query">%ARROW%</span>
+		%TITLE%
+		<span title="delete query" onclick="deleteQuery(%NUMBER%);" class="symbol link">x</span>
+		<span title="use query name" onclick="useQueryName(%NUMBER%);queryNameInputFocus();" class="symbol link">&uarr;</span>
+        <span title="query notes%NOTE_CHAR_COUNT%" alt-title="query notes" onclick="showNotes(%NUMBER%);" class="symbol link">%NOTES%</span>
+		<span title="select this query" class="symbol link export" style="display:none">
+			<input type="checkbox" class="query-export" style="display:none;" id="export-%NUMBER%" onchange="checkExportQueryToggle(%NUMBER%);exportQueryCount();" checked="checked" />
+			<label title="select this query" for="export-%NUMBER%">
+				<span id="export-%NUMBER%-off" class="symbol link off" style="display:none;">&#9744;</span>
+				<span id="export-%NUMBER%-on" class="symbol link on">&#9745;</span>
+			</label>
+		</span>
+	</li>
+-->
+</div>
+
+<div class="inline-templates" id="noteSymbolTpl">
+<!--
+	&#8795;&nbsp;
+-->
+</div>
+
+<div class="inline-templates" id="emptyNoteSymbolTpl">
+<!--
+	&equiv;&nbsp;
+-->
+</div>
+
+<div class="inline-templates" id="useQuerySymbolTpl">
+<!--
+	&larr;&#8211;
+-->
+</div>
+
+<div class="inline-templates" id="useQuerySymbolAndServiceTpl">
+<!--
+	&larr;&mdash;
+-->
+</div>
+
+<div class="inline-templates" id="groupTpl">
+<!--
+	<li>
+		<span class="group" data-id="%HASH%"><span class="symbol">&boxbox;&nbsp;</span>%TITLE% (<span id="count-%HASH%">0</span>)</span>
+		<span title="use group name" onclick="useGroupName('%TITLE%');queryNameInputFocus();" class="symbol link">&uarr;</span>
+		<span title="select queries" class="symbol link export" style="display:none">
+			<input type="checkbox" class="query-group-select" id="group-export-%HASH%" style="display:none;" onchange="checkExportGroupToggle('%HASH%');exportQueryCount();" checked="checked" />
+			<label title="select queries" for="group-export-%HASH%">
+				<span id="group-export-%HASH%-off" class="symbol link off" style="display:none;">&#9744;</span>
+				<span id="group-export-%HASH%-on" class="symbol link on">&#9745;</span>
+			</label>
+		</span>
+        <ul class="queries group-queries" id="group-%HASH%">
+        </ul>
+	</li>
+-->
+</div>
+
+<div class="inline-templates" id="exampleQueryComplexTpl">
+<!--
+{
+    "conditions" : [
+        { "field" : "collectionType", "operator" : "=", "value" : "Aves" },
+        { "field" : "sex", "operator" : "EQUALS_IC", "value" : "female" }
+    ],
+    "logicalOperator" : "AND",
+    "sortFields" : [
+        { "path" : "collectionType", "sortOrder" : "desc" }
+    ],
+    "from" : 0,
+    "size" : 50
+}
+-->
+</div>
+
+<div class="inline-templates" id="emptyQueryTpl">
+<!--
+{}
+-->
+</div>
+
+<div class="inline-templates" id="exampleQueryHrTpl">
+<!--
+sourceSystem.code=NSR&taxonRank=species&_from=100&_logicalOperator=AND
+-->
+</div>
+
+<div class="inline-templates" id="usefulLinkTpl">
+<!--
+	<li class="linksLink">
+    	<a href="%URL%" title="%URL%" target="%TARGET%">%LABEL%</a>
+        %TARGET_ICON%
+	</li>
+-->
+</div>
+
+<div class="inline-templates" id="usefulLinkTargetIconTpl">
+<!--
+	<a href="%URL%" title="open in same (new) window" target="links_%I%" class="symbol">&#8599;</a>
+-->
+</div>
+
+<div class="inline-templates" id="usefulLinkDividerTpl">
+<!--
+	<li class="linksDivider">%LABEL%</li>
+-->
+</div>
+
+<div class="inline-templates" id="queryContextMainItemTpl">
+<!--
+	<span title="%TITLE%" class="context-menu-item" onmouseover="$('[id^=context-]').toggle(false);$('#context-%LOCAL_ID%').toggle(true);">
+		%LABEL%
+	</span>
+-->
+</div>
+
+<div class="inline-templates" id="queryContextExtraMainItemsTpl">
+<!--
+	<span title="%TITLE%" class="context-menu-item context-menu-item-clickable" onclick="%ONCLICK%">
+		%LABEL%
+	</span>
+-->
+</div>
+
+<div class="inline-templates" id="queryContextItemsTpl">
+<!--
+	<ul class="context-menu-subitems" id="context-%LOCAL_ID%">
+		%ITEMS%
+	</ul>
+-->
+</div>
+
+<div class="inline-templates" id="queryOperatorContextTpl">
+<!--
+	<li class="context-menu-item context-menu-subitem" onclick="insertOperator(this);closeQueryWindowContextMenu();" value="%OPERATOR%">%OPERATOR%</li>
+-->
+</div>
+
+<div class="inline-templates" id="codeBitContextTpl">
+<!--
+	<li class="context-menu-item context-menu-subitem" onclick="insertCodeBit(this);closeQueryWindowContextMenu();" value="%I%">%LABEL%</li>
+-->
+</div>
+
+<div class="inline-templates" id="codeBitContextHeaderTpl">
+<!--
+	<li class="context-menu-item context-menu-subitem context-menu-header">%LABEL%</li>
+-->
+</div>
+
+<div class="inline-templates" id="editContextTpl">
+<!--
+	<li class="context-menu-item context-menu-subitem" onclick="%ONCLICK%" title="%TITLE%">%LABEL%</li>
+-->
+</div>
+
+<div class="inline-templates" id="disabledOptionTpl">
+<!--
+	<option disabled selected>%LABEL%</option>
+-->
+</div>
+
+<div class="inline-templates" id="completeRequestExportTpl">
+<!--
+server: %SERVER%
+service: %SERVICE% ("%SERVICE_LABEL%")
+query:
+%QUERY%
+URL: %URL%
+-->
+</div>
+
+<div class="inline-templates" id="documentFieldSuggestionsTpl">
+<!--
+	<ul>%ITEMS%</ul>
+-->
+</div>
+
+<div class="inline-templates" id="documentFieldSuggestionTpl">
+<!--
+	<li class="field-suggestion-items" data-field="%FIELD%" title="click to insert; ctrl+click to add insert with &quot;'s"><div>
+		%LABEL% <span class="additional"><span class="operators">[%OPERATORS%]</span> <span class="type">%TYPE%</span> <span class="indexed">%INDEXED%</span></span>
+	</div></li>
+-->
+</div>
+
+<div class="inline-templates" id="jiraNoFormatTpl">
+<!--
+{noformat}
+%QUERY%
+{noformat}
+-->
+</div>
+
+<div class="inline-templates" id="messageCloseTpl">
+<!--
+	&nbsp;<a href="#" onclick="$('#message').fadeOut(100);return false;" class="no-underline">x</a>
+-->
+</div>
+
+<div class="inline-templates" id="cursorPositionTpl">
+<!--
+	[%LINE%,%POS%]
+-->
+</div>
+
+<div class="inline-templates" id="timerListTpl">
+<!--
+	<b>timer</b><span class="symbol link" style="float:right" onclick="$('.timer').toggle();">x</span><br />
+	<div class="small">%QUERY%</div>
+	<div class="small">%SERVER%</div>
+	<ul>%ITEMS%</ul>
+	<div>average: %AVERAGE%ms (%EXEC_COUNT%)</div>
+	<span class="symbol link small" title="copy timer average" onclick="copyTimerAverage();">copy</span>
+	<span class="symbol link small" title="clear timer" onclick="clearTimer();">clear</span>
+<span id="timerClipboard" style="display:none">
+[timer]
+%SERVER% / %QUERY%
+average: %AVERAGE%ms (%EXEC_COUNT% executions)
+</span>
+-->
+</div>
+
+<div class="inline-templates" id="timerCheckpointTpl">
+<!--
+	<li>
+		%EVENT%: %DIFFERENCE%ms
+	</li>	
+-->
+</div>
+
+<div class="inline-templates" id="hashesTpl">
+<!--
+	<b>output hashes</b><span class="symbol link" style="float:right" onclick="$('.hashes').toggle();">x</span><br />
+	<ul>%ITEMS%</ul>
+	<span class="symbol link small" title="clear hashes" onclick="removeOutputHash(null);printOutputHashes();">clear</span>
+-->
+</div>
+
+<div class="inline-templates" id="hashTpl">
+<!--
+	<li class="%CLASS%">
+		%HASH% (%TIMESTAMP%) <span class="symbol link small" title="clear hash" onclick="removeOutputHash(%I%);printOutputHashes();">x</span>
+	</li>	
+-->
+</div>
+
+<div class="inline-templates" id="responseSuccessTpl">
+<!--
+<pre>
+%RESPONSE%
+</pre>
+-->
+</div>
+
+<div class="inline-templates" id="responseErrorTpl">
+<!--
+	<p>
+		<span class="error">error: %ERROR%</span>
+	</p>
+	<p>
+		<span class="message">%MESSAGE%</span>
+	</p>
+	<p>
+		<span class="url">%REQUEST_URI%</span>
+	</p>
+-->
+</div>
+
+<div class="inline-templates" id="otherFormatsMessageTpl">
+<!--
+<p>
+	results in formats other than JSON and html are opened in a new window.<br />
+	tell your browser to allow this page to open popups.<br />
+	(content-type: %MIME%}
+</p>
+-->
+</div>
+
+</body>
+</html>
