@@ -1,2 +1,2 @@
 FROM nginx 
-COPY static-html-directory /usr/share/nginx/html
+COPY scratchpad /usr/share/nginx/html/
