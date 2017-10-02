@@ -1,4 +1,2 @@
-FROM nginx 
-COPY scratchpad /usr/share/nginx/html/
-RUN rm /etc/nginx/conf.d/default.conf
-COPY conf/nginx.conf /etc/nginx/default.conf
+FROM python:3-onbuild
+CMD python scratchpad.py
