@@ -9,8 +9,8 @@ app = Flask(__name__)
 
 try:
 	ip = environ['NBA_ADDRESS']
-except Exception as e:
 	port = environ['NBA_PORT']
+except Exception as e:
 	print('no environs found')
 	print(e)
 	exit(1)
