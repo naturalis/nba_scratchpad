@@ -40,7 +40,7 @@ function setFixedServer( p )
 {
 	p.url.replace(/\/$/,"");
 	p.label = p.url
-	p.testpath = p.url + "/v2/"
+	p.testpath = p.nbaServer + "/v2/"
 	p.noServices = false;
 	p.allowCrossDomain = true;
 	server=p;
@@ -566,3 +566,16 @@ function runQuery()
 		openRequest();
 	}
 }
+
+function createProxyRequest( url )
+{
+	if ( url!=undefined && url.length>0 )
+	{
+		return server.url + server.proxyPath + encodeURIComponent( url.replace( server.url, "") );
+	}
+	else
+	{
+		requestUrl = server.url + server.proxyPath + encodeURIComponent( requestUrl.replace( server.url, "") );
+	}
+}
+

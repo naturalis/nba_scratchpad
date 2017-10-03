@@ -12,7 +12,6 @@
 <script src="{{ url_for('static', filename='js/md5/md5.js') }}"></script>
 <script src="{{ url_for('static', filename='js/json2.js') }}"></script>
 <script src="{{ url_for('static', filename='js/system.js') }}"></script>
-<script src="{{ url_for('static', filename='js/servers.js') }}"></script>
 <script src="{{ url_for('static', filename='js/services.js') }}"></script>
 <script src="{{ url_for('static', filename='js/defaultRestServiceList.js') }}"></script>
 <script src="{{ url_for('static', filename='js/datamodels.js') }}"></script>
@@ -48,7 +47,7 @@ $(document).ready(function(e)
 	//initServers();
 	//populateServers();
 	//setServer();
-	setFixedServer( { url: window.location.protocol + "//" + window.location.host, proxyPath: "/proxy/?query=" } );
+	setFixedServer( { url: window.location.protocol + "//" + window.location.host, proxyPath: "/proxy/?query=", nbaServer: window.location.protocol + "//{{ nba_address }}:{{ nba_port }}" } );
 	getServices();
 	addStaticServices();
 	populateServices();
@@ -88,7 +87,6 @@ $(document).ready(function(e)
 </script>
 </head>
 <body>
-
 <form>
 
 	<div id="top">

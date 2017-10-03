@@ -83,6 +83,10 @@ function getDataModels()
 		var docType = documentTypes[n];
 
 		var url = server.url + "/" + nbaServerConfig.version + "/" + docType + nbaServerConfig.metaServiceUrls.getPaths
+		if ( server.proxyPath )
+		{
+			url=createProxyRequest( url );
+		}
 		
 		var p={
 			dataType: "json",
@@ -103,8 +107,12 @@ function getDataModels()
 		
 		$.ajax( p );
 
-
 		url = server.url + "/" + nbaServerConfig.version + "/" + docType + nbaServerConfig.metaServiceUrls.getFieldInfo
+		if ( server.proxyPath )
+		{
+			url=createProxyRequest( url );
+		}
+		
 
 		if (server.allowCrossDomain)
 		{		

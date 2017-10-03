@@ -250,20 +250,24 @@ function bootstrapSupportWindows()
 	{
 		$(this).on('mousedown',function()
 		{
+			var label=$(this).html().toLowerCase();
+			
 			// specific overrides for iframe
-			prevColor=$('[title="'+$(this).html()+'"]').css('background-color');
-			$('[title="'+$(this).html()+'"]').css('background-color','');
+			prevColor=$('[title="'+label+'"]').css('background-color');
+			$('[title="'+label+'"]').css('background-color','');
 		
-			$('[title="'+$(this).html()+'"]').addClass('helpHighlight');
-			$('[alt-title="'+$(this).html()+'"]').addClass('helpHighlight');
+			$('[title="'+label+'"]').addClass('helpHighlight');
+			$('[alt-title="'+label+'"]').addClass('helpHighlight');
 		});
 		$(this).on('mouseup',function()
 		{
-			$('[title="'+$(this).html()+'"]').removeClass('helpHighlight');
-			$('[alt-title="'+$(this).html()+'"]').removeClass('helpHighlight');
+			var label=$(this).html().toLowerCase();
+
+			$('[title="'+label+'"]').removeClass('helpHighlight');
+			$('[alt-title="'+label+'"]').removeClass('helpHighlight');
 
 			// specific override for iframe
-			$('[title="'+$(this).html()+'"]').css('background-color',prevColor);
+			$('[title="'+label+'"]').css('background-color',prevColor);
 		});
 	});
 

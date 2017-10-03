@@ -7,11 +7,6 @@ function setRequestParameters()
 	useContentType = $('#contentEncoding').val();
 }
 
-function createProxyRequest ()
-{
-	requestUrl = server.url + server.proxyPath + encodeURIComponent( requestUrl.replace( server.url, "") );
-}
-
 function openRequest()
 {
 	clearResults();

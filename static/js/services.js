@@ -12,6 +12,10 @@ function getServices()
 	serviceIndex=[];
 
 	var url = server.url+"/"+nbaServerConfig.version+nbaServerConfig.metaServiceUrls.restServices
+	if ( server.proxyPath )
+	{
+		url=createProxyRequest( url );
+	}
 	
 	var p={
 		dataType: "json",
