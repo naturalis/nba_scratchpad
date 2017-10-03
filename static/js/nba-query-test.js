@@ -36,9 +36,15 @@ var lastLoadedSavedQueryName="";
 var latestResult={};
 var selectedAcceptHeaders=[];
 
-function setServer()
+function setFixedServer( p )
 {
-	server=findServer($("#servers").val());
+	p.url.replace(/\/$/,"");
+	p.label = p.url
+	p.testpath = p.url + "/v2/"
+	p.noServices = false;
+	p.allowCrossDomain = true;
+	server=p;
+	$('#servers').html( p.url );
 }
 
 function setService()
@@ -51,6 +57,7 @@ function setServerStatusLink()
 	if (server==undefined) return;
 	$('#serverStatus').attr("href",server.testpath).toggle(( typeof server.testpath == 'string' ));
 }
+
 function setServerSelectTitle()
 {
 	if (server==undefined) return;
@@ -166,7 +173,6 @@ function getRequestUrl()
 
 function makeRequest()
 {
-	setServer();
 	setService();
 
 	if (!server) return;

@@ -3,39 +3,39 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title></title>
-<link rel="shortcut icon" href="css/5028-512.png">
 
-<script src="/js/jquery-3.2.1.min.js"></script>
-<script src="/js/jquery-ui-1.12.1/jquery-ui.min.js"></script>
-<script src="/js/jquery.scrollTo-2.1.2/jquery.scrollTo.min.js"></script>
-<script src="/js/jstorage.js"></script>
-<script src="/js/md5/md5.js"></script>
-<script src="/js/json2.js"></script>
-<script src="/js/system.js"></script>
-<script src="/js/servers.js"></script>
-<script src="/js/services.js"></script>
-<script src="/js/defaultRestServiceList.js"></script>
-<script src="/js/datamodels.js"></script>
-<script src="/js/bootstrap.js"></script>
-<script src="/js/nba-query-test.js"></script>
-<script src="/js/request.js"></script>
-<script src="/js/query-window.js"></script>
-<script src="/js/query-import-export.js"></script>
-<script src="/js/notes.js"></script>
-<script src="/js/tools.js"></script>
-<script src="/js/inline_templates.js"></script>
-<script src="/js/config.js"></script>
-<script src="/js/loader.js"></script>
-<script src="/js/timer.js"></script>
-<script src="/js/results.js"></script>
-<script src="/js/hashes.js"></script>
-<script src="/js/jsonpath-0.8.0.js"></script>
-<script src="/js/xpathjson.js"></script>
+<link rel="shortcut icon" href="{{ url_for('static', filename='css/5028-512.png') }}" />
+<script src="{{ url_for('static', filename='js/jquery-3.2.1.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery-ui-1.12.1/jquery-ui.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.scrollTo-2.1.2/jquery.scrollTo.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jstorage.js') }}"></script>
+<script src="{{ url_for('static', filename='js/md5/md5.js') }}"></script>
+<script src="{{ url_for('static', filename='js/json2.js') }}"></script>
+<script src="{{ url_for('static', filename='js/system.js') }}"></script>
+<script src="{{ url_for('static', filename='js/servers.js') }}"></script>
+<script src="{{ url_for('static', filename='js/services.js') }}"></script>
+<script src="{{ url_for('static', filename='js/defaultRestServiceList.js') }}"></script>
+<script src="{{ url_for('static', filename='js/datamodels.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+<script src="{{ url_for('static', filename='js/nba-query-test.js') }}"></script>
+<script src="{{ url_for('static', filename='js/request.js') }}"></script>
+<script src="{{ url_for('static', filename='js/query-window.js') }}"></script>
+<script src="{{ url_for('static', filename='js/query-import-export.js') }}"></script>
+<script src="{{ url_for('static', filename='js/tools.js') }}"></script>
+<script src="{{ url_for('static', filename='js/notes.js') }}"></script>
+<script src="{{ url_for('static', filename='js/inline_templates.js') }}"></script>
+<script src="{{ url_for('static', filename='js/config.js') }}"></script>
+<script src="{{ url_for('static', filename='js/loader.js') }}"></script>
+<script src="{{ url_for('static', filename='js/timer.js') }}"></script>
+<script src="{{ url_for('static', filename='js/results.js') }}"></script>
+<script src="{{ url_for('static', filename='js/hashes.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jsonpath-0.8.0.js') }}"></script>
+<script src="{{ url_for('static', filename='js/xpathjson.js') }}""></script>
 
-<link rel="stylesheet" type="text/css" media="screen" title="default" href="/css/inline_templates.css" />
-<link rel="stylesheet" type="text/css" media="screen" title="default" href="/css/jquery-ui.css" />
-<link rel="stylesheet" type="text/css" media="screen" title="default" href="/css/style.css" />
-<link rel="stylesheet" type="text/css" media="screen" title="default" href="/css/custom-styles.css" />
+<link rel="stylesheet" type="text/css" media="screen" title="default" href="{{ url_for('static', filename='css/inline_templates.css') }}" />
+<link rel="stylesheet" type="text/css" media="screen" title="default" href="{{ url_for('static', filename='css/jquery-ui.css') }}" />
+<link rel="stylesheet" type="text/css" media="screen" title="default" href="{{ url_for('static', filename='css/style.css') }}" />
+<link rel="stylesheet" type="text/css" media="screen" title="default" href="{{ url_for('static', filename='css/custom-styles.css') }}" />
 
 <script>
 $(document).ready(function(e)
@@ -45,9 +45,10 @@ $(document).ready(function(e)
 	disablePage();
 	setApplicationInfo();
 	acquireInlineTemplates();
-	initServers();
-	populateServers();
-	setServer();
+	//initServers();
+	//populateServers();
+	//setServer();
+	setFixedServer( { url: window.location.protocol + "//" + window.location.host, proxyPath: "/proxy/?query=" } );
 	getServices();
 	addStaticServices();
 	populateServices();
@@ -87,11 +88,13 @@ $(document).ready(function(e)
 </script>
 </head>
 <body>
+
+
 <form>
 
 	<div id="top">
 		<div id="serversandservices">
-			<select id="servers" alt-title="server list" title="server list" onchange="
+			<!-- select id="servers" alt-title="server list" title="server list" onchange="
 				disablePage();
 				rememberSelectedService();
 				setServer();
@@ -107,7 +110,7 @@ $(document).ready(function(e)
 				recallSelectedService();
 				enablePage();
 				togglePurlAcceptHeaders();"
-				accesskey="q"></select>
+				accesskey="q"></select -->
 			<select title="service list" onchange="setService();displayFullUrl();" id="services" accesskey="w"></select>
 			<a title="server status" href="" id="serverStatus" target="_new">check server status</a>
 			<span title="last server http response code" class="hint" style="margin-left:10px" id="serverResponseCode"></span>
@@ -191,7 +194,7 @@ $(document).ready(function(e)
 			<span class="appName"></span> (<span class="appVersion"></span>; <span class="appDate"></span>) | 
 			<span class="appAuthor"></span> <a href="" class="email appEmail">&#9993;</a> | 
 			<span title="toggle help (F2 also works)" onclick="helpToggle();" class="link">help</span> | 
-			<span title="toggle links (F4 also works)" onclick="linksToggle();" class="link">links</span>
+			running on: <span id="servers"></span>
 		</span>
 	</div>
 
@@ -521,6 +524,7 @@ $(document).ready(function(e)
 				<li>v3.0 (2017.06.14): added some access keys. added <code>custom-styles.css</code> option. added query execution timer. Ctrl+space inserts multiple spaces. added querywindow context menu toggle (so you can turn off the browser's spelling checker). added Ctrl+s. added Shift+add slashes. added possibility of extra static services (in <code>config.js</code>), including option for non-standard port (for PURL). added different result window for cross-domain-enabled servers, incl. copying and searching in results. implemented direct server requests for all ajax services, with proxy as backup. added support for non-JSON and -html responses. added manual setting of accept headers. added GET/POST-switch. added http response code monitor. added possibility of suppressing output (useful for better query timing). added output hashes (to quicky see if output has changed). bugfixes.				</li>
 				<li>v3.1 (2017.07.18): added grouping in context code menu. added 'noServices' option to servers.</li>
 				<li>v3.2 (2017.09.05): operator list is generated automatically. added XPath for JSON functions. small fixes.</li>
+				<li>v3.2-server (2017.10.03): migrated to server.</li>
 			</ul>
 		</p>
 
@@ -543,15 +547,6 @@ $(document).ready(function(e)
 	</div>
 </div>
 
-<div id="linksDiv">
-	<div id="linksHeader">
-		<span class="linksHeader">links</span> <span class="link windowClose" onclick="linksToggle();">X</span><br />
-	</div>
-	<div id="linksBody">
-		<ul id="linksLinks"></ul>
-	</div>
-</div>
-
 <div id="documentFieldSuggestions"></div>
 
 <div id="queryWindowContextMenu"></div>
@@ -566,7 +561,7 @@ $(document).ready(function(e)
 	<pre id="JSONpathResultsContent" ondblclick="addElementToJSONpath();"></pre>
 </div>
 
-<div id="loader"><img src="css/default.svg"></div>
+<div id="loader"><img src="{{ url_for('static', filename='css/default.svg') }}"></div>
 
 
 <div class="inline-templates" id="serverTpl">
@@ -651,16 +646,26 @@ $(document).ready(function(e)
 <div class="inline-templates" id="exampleQueryComplexTpl">
 <!--
 {
-    "conditions" : [
-        { "field" : "collectionType", "operator" : "=", "value" : "Aves" },
-        { "field" : "sex", "operator" : "EQUALS_IC", "value" : "female" }
-    ],
-    "logicalOperator" : "AND",
-    "sortFields" : [
-        { "path" : "collectionType", "sortOrder" : "desc" }
-    ],
-    "from" : 0,
-    "size" : 50
+  "conditions" : [
+    { "field" : "gatheringEvent.country", "operator" : "EQUALS_IC", "value" : "Nederland", "boost": 2.0,
+      "or" : [
+        { "field" : "gatheringEvent.country", "operator" : "EQUALS_IC", "value" : "Netherlands", "boost": 0.5 },
+        { "field" : "gatheringEvent.country", "operator" : "EQUALS_IC", "value" : "Netherlands, The", "boost": 1 }
+       ]
+    },
+    { "field" : "kindOfUnit", "operator" : "EQUALS_IC", "value" : "EGG"
+    },
+    { "field" : "identifications.taxonRank", "operator" : "EQUALS_IC", "value" : "species",
+      "and" : [
+         { "field" : "identifications.scientificName.genusOrMonomial", "operator" : "EQUALS_IC", "value" : "corvus" }
+       ]
+    }
+  ],
+  "logicalOperator" : "AND",
+  "fields" : ["gatheringEvent.dateTimeBegin","gatheringEvent.locality","identifications.scientificName","kindOfUnit"],
+  "sortFields" : [ { "path" : "unitID", "sortOrder" : "desc" } ],
+  "from" : 0,
+  "size" : 5
 }
 -->
 </div>

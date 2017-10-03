@@ -37,25 +37,7 @@ var codeBits=[
 	{ label: "query (HR)", code: 'FIELD=VALUE&FIELD=VALUE&_from=0&_size=100&_logicalOperator=AND|OR&_fields=FIELD,FIELD,FIELD&_ignoreCase=true|false' }	
 ];
 
-var proxyServer="http://query.yahooapis.com/v1/public/yql";
-
 var googleUrl = 'https://www.google.nl/search?q=%SEARCH%';
-
-/*
-	items without URL are displayed as section headers.
-*/
-var usefulLinks=[
-	{label: "Kibana" },
-	{label: "Kibana (v2 test)", url: "http://145.136.242.167:5601/app/kibana/" },
-	{label: "Kibana (v2 dev)", url: "http://145.136.242.164:5601/app/kibana/" },
-	{label: "doc" },
-	{label: "NBA (Java Client) doc (v2)", url: "http://naturalis.github.io/naturalis_data_api/javadoc/v2/client/" },
-	{label: "API doc (v0.15)", url: "http://docs.biodiversitydata.nl/en/latest/" },
-	{label: "Elasticsearch Query DSL", url: "https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html" },
-	{label: "other" },
-	{label: "BioPortal (v0.15)", url: "http://bioportal.naturalis.nl/" },
-	{label: "JSON parser", url: "http://jsonviewer.stack.hu/" },
-];
 
 /*
 	number of inserted spaces when doing ctrl+space in query window

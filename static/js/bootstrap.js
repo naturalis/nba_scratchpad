@@ -19,7 +19,6 @@ function checkMinimalRequirements()
 
 	if ("undefined" === typeof servers) buffer.push("server defintion is missing");
 	if ("undefined" === typeof nbaServerConfig) buffer.push("NBA server settings are missing");
-	if ("undefined" === typeof proxyServer) buffer.push("proxyServer is missing");
 	if ("undefined" === typeof nonDocumentPathRoots) buffer.push("non-document path root configuration is missing");
 	
 	if (buffer.length==0) return true;
@@ -28,53 +27,6 @@ function checkMinimalRequirements()
 	alert(buffer.join("\n"));
 
 	return false;
-}
-
-function initServers()
-{
-	for(var i=0;i<servers.length;i++)
-	{
-		servers[i].url=servers[i].url.replace(/((\/|[\s]))*$/g,'').replace(/^[\s]*/g,'');
-		
-		if (servers[i].allowCrossDomain==undefined)
-		{
-			servers[i].allowCrossDomain=false;
-		}
-		if (servers[i].noServices==undefined)
-		{
-			servers[i].noServices=false;
-		}
-		if (servers[i].testpath==undefined)
-		{
-			servers[i].testpath=servers[i].url+"/v2/";
-		}
-		if (servers[i].label==undefined)
-		{
-			servers[i].label=servers[i].url;
-		}
-	}
-}
-
-function populateServers()
-{
-	for(var i=0;i<servers.length;i++)
-	{
-		servers[i].index=i;
-		var s=servers[i];
-		if (s.disable) continue;
-		$('#servers').append(
-			fetchTemplate( 'serverTpl' )
-				.replace('%INDEX%',s.index)
-				.replace('%SELECTED%',(s.default ? ' selected="selected"' : '' ))
-				.replace('%LABEL%',s.label )
-				.replace('%HINT%',s.url )
-		);
-	}
-	
-	if ($('#servers option').length==0)
-	{
-		$('#servers').append(fetchTemplate( 'serviceDisabledTpl' ).replace('%LABEL%','found no servers'));
-	}
 }
 
 function bootstrapQueryWindowContextmenu()
@@ -319,24 +271,9 @@ function bootstrapSupportWindows()
 	
 	$( '.active-comment-char' ).html(commentCharacters[defaultCommentCharIndex]);
 	$( '.ctrl-space-number-of-spaces' ).html(ctrlSpaceNumberOfSpaces);
-	
-	for(var i=0;i<usefulLinks.length;i++)
-	{
-		var tpl = usefulLinks[i].url ? fetchTemplate( 'usefulLinkTpl' ) : fetchTemplate( 'usefulLinkDividerTpl' );
-		
-		$( '#linksLinks' )
-			.append( tpl
-				.replace('%TARGET_ICON%', usefulLinks[i].target ? '' : fetchTemplate( 'usefulLinkTargetIconTpl' ) )
-				.replace('%LABEL%',usefulLinks[i].label)
-				.replace('%TARGET%',usefulLinks[i].target ? usefulLinks[i].target : '_blank' )
-				.replace(/%URL%/g,usefulLinks[i].url)
-				.replace('%I%',i)
-			);
-	}
 
 	$( '#notesDiv' ).draggable({ handle: '#notesName' });
 	$( '#helpDiv' ).draggable({ handle: '#helpHeader' });
-	$( '#linksDiv' ).draggable({ handle: '#linksHeader' });
 }
 
 function bindKeys()

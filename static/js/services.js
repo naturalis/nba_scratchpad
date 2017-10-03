@@ -25,19 +25,9 @@ function getServices()
 		complete: function () {}
 	};
 	
-	if (server.allowCrossDomain)
-	{
-		setMessage( "accessing service list (directly)" );
-		p.url=url;
-		p.success=function(data) { processServiceData( data ); };
-	}
-	else
-	{
-		setMessage( "accessing service list (via proxy)" );
-		p.url=proxyServer;
-		p.data={ q: "select * from json where url=\""+url+"\"", format: "json" };
-		p.success=function(data) { processServiceData( !data.query.results ? null : data.query.results.json.json ); };
-	}
+	setMessage( "accessing service list" );
+	p.url=url;
+	p.success=function(data) { processServiceData( data ); };
 	
 	servicesFinishedLoading=false;
 
@@ -55,7 +45,6 @@ function getServices()
 	}
 
 	services.sort(serviceSort);
-
 }
 
 function processServiceData( data )
