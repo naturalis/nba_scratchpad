@@ -3,11 +3,11 @@ var activeWindowType;
 
 function setApplicationInfo()
 {
-	var versionInfo=$('#version-history li').last().html().trim().split(":").shift().split(" ",2).map(function(e,i){ return e.replace(/(\(|\)|\s|v)/gi,""); });
+	var versionInfo=$('#version-history li').last().html().trim().split(":").shift().split(" ",2).map(function(e,i){ return e.replace(/(\(|\)|\s)/gi,""); });
 
 	$('title').html(application.name);
 	$('.appName').html(application.name);
-	$('.appVersion').html("v"+(versionInfo[0] ? versionInfo[0] : application.version));
+	$('.appVersion').html(versionInfo[0] ? versionInfo[0] : application.version);
 	$('.appDate').html(versionInfo[1] ? versionInfo[1] : application.date);
 	$('.appAuthor').html(application.author);
 	$('.appEmail').attr("href","mailto:"+application.email);

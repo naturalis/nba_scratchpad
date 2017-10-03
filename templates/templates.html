@@ -1,0 +1,310 @@
+<div class="inline-templates" id="serverTpl">
+<!--
+	<option title="%HINT%" value="%INDEX%" %SELECTED%>%LABEL%</option>
+-->
+</div>
+
+<div class="inline-templates" id="serviceTpl">
+<!--
+	<option value="%INDEX%" %SELECTED%>%PATH%&nbsp;&nbsp;&nbsp;%LABEL% %ENCODED%%NO_QUERY%%ORIGIN%</option>
+-->
+</div>
+
+<div class="inline-templates" id="serviceDisabledTpl">
+<!--
+	<option disabled="disabled" class="disabledOption">%LABEL%</option>
+-->
+</div>
+
+<div class="inline-templates" id="queryTpl">
+<!--
+	<li class="query" id="query-%NUMBER%" data-number="%NUMBER%">
+		<span title="use query with%SERVICE%" onclick="useQuery(%NUMBER%);highlightQuery(%NUMBER%);autoPullQueryTrigger();switchNotes(%NUMBER%);" class="symbol link use-query">%ARROW%</span>
+		%TITLE%
+		<span title="delete query" onclick="deleteQuery(%NUMBER%);" class="symbol link">x</span>
+		<span title="use query name" onclick="useQueryName(%NUMBER%);queryNameInputFocus();" class="symbol link">&uarr;</span>
+        <span title="query notes%NOTE_CHAR_COUNT%" alt-title="query notes" onclick="showNotes(%NUMBER%);" class="symbol link">%NOTES%</span>
+		<span title="select this query" class="symbol link export" style="display:none">
+			<input type="checkbox" class="query-export" style="display:none;" id="export-%NUMBER%" onchange="checkExportQueryToggle(%NUMBER%);exportQueryCount();" checked="checked" />
+			<label title="select this query" for="export-%NUMBER%">
+				<span id="export-%NUMBER%-off" class="symbol link off" style="display:none;">&#9744;</span>
+				<span id="export-%NUMBER%-on" class="symbol link on">&#9745;</span>
+			</label>
+		</span>
+	</li>
+-->
+</div>
+
+<div class="inline-templates" id="noteSymbolTpl">
+<!--
+	&#8795;&nbsp;
+-->
+</div>
+
+<div class="inline-templates" id="emptyNoteSymbolTpl">
+<!--
+	&equiv;&nbsp;
+-->
+</div>
+
+<div class="inline-templates" id="useQuerySymbolTpl">
+<!--
+	&larr;&#8211;
+-->
+</div>
+
+<div class="inline-templates" id="useQuerySymbolAndServiceTpl">
+<!--
+	&larr;&mdash;
+-->
+</div>
+
+<div class="inline-templates" id="groupTpl">
+<!--
+	<li>
+		<span class="group" data-id="%HASH%"><span class="symbol">&boxbox;&nbsp;</span>%TITLE% (<span id="count-%HASH%">0</span>)</span>
+		<span title="use group name" onclick="useGroupName('%TITLE%');queryNameInputFocus();" class="symbol link">&uarr;</span>
+		<span title="select queries" class="symbol link export" style="display:none">
+			<input type="checkbox" class="query-group-select" id="group-export-%HASH%" style="display:none;" onchange="checkExportGroupToggle('%HASH%');exportQueryCount();" checked="checked" />
+			<label title="select queries" for="group-export-%HASH%">
+				<span id="group-export-%HASH%-off" class="symbol link off" style="display:none;">&#9744;</span>
+				<span id="group-export-%HASH%-on" class="symbol link on">&#9745;</span>
+			</label>
+		</span>
+        <ul class="queries group-queries" id="group-%HASH%">
+        </ul>
+	</li>
+-->
+</div>
+
+<div class="inline-templates" id="exampleQueryComplexTpl">
+<!--
+{
+  "conditions" : [
+    { "field" : "gatheringEvent.country", "operator" : "EQUALS_IC", "value" : "Nederland", "boost": 2.0,
+      "or" : [
+        { "field" : "gatheringEvent.country", "operator" : "EQUALS_IC", "value" : "Netherlands", "boost": 0.5 },
+        { "field" : "gatheringEvent.country", "operator" : "EQUALS_IC", "value" : "Netherlands, The", "boost": 1 }
+       ]
+    },
+    { "field" : "kindOfUnit", "operator" : "EQUALS_IC", "value" : "EGG"
+    },
+    { "field" : "identifications.taxonRank", "operator" : "EQUALS_IC", "value" : "species",
+      "and" : [
+         { "field" : "identifications.scientificName.genusOrMonomial", "operator" : "EQUALS_IC", "value" : "corvus" }
+       ]
+    }
+  ],
+  "logicalOperator" : "AND",
+  "fields" : ["gatheringEvent.dateTimeBegin","gatheringEvent.locality","identifications.scientificName","kindOfUnit"],
+  "sortFields" : [ { "path" : "unitID", "sortOrder" : "desc" } ],
+  "from" : 0,
+  "size" : 5
+}
+-->
+</div>
+
+<div class="inline-templates" id="emptyQueryTpl">
+<!--
+{}
+-->
+</div>
+
+<div class="inline-templates" id="exampleQueryHrTpl">
+<!--
+sourceSystem.code=NSR&taxonRank=species&_from=100&_logicalOperator=AND
+-->
+</div>
+
+<div class="inline-templates" id="usefulLinkTpl">
+<!--
+	<li class="linksLink">
+    	<a href="%URL%" title="%URL%" target="%TARGET%">%LABEL%</a>
+        %TARGET_ICON%
+	</li>
+-->
+</div>
+
+<div class="inline-templates" id="usefulLinkTargetIconTpl">
+<!--
+	<a href="%URL%" title="open in same (new) window" target="links_%I%" class="symbol">&#8599;</a>
+-->
+</div>
+
+<div class="inline-templates" id="usefulLinkDividerTpl">
+<!--
+	<li class="linksDivider">%LABEL%</li>
+-->
+</div>
+
+<div class="inline-templates" id="queryContextMainItemTpl">
+<!--
+	<span title="%TITLE%" class="context-menu-item" onmouseover="$('[id^=context-]').toggle(false);$('#context-%LOCAL_ID%').toggle(true);">
+		%LABEL%
+	</span>
+-->
+</div>
+
+<div class="inline-templates" id="queryContextExtraMainItemsTpl">
+<!--
+	<span title="%TITLE%" class="context-menu-item context-menu-item-clickable" onclick="%ONCLICK%">
+		%LABEL%
+	</span>
+-->
+</div>
+
+<div class="inline-templates" id="queryContextItemsTpl">
+<!--
+	<ul class="context-menu-subitems" id="context-%LOCAL_ID%">
+		%ITEMS%
+	</ul>
+-->
+</div>
+
+<div class="inline-templates" id="queryOperatorContextTpl">
+<!--
+	<li class="context-menu-item context-menu-subitem" onclick="insertOperator(this);closeQueryWindowContextMenu();" value="%OPERATOR%">%OPERATOR%</li>
+-->
+</div>
+
+<div class="inline-templates" id="codeBitContextTpl">
+<!--
+	<li class="context-menu-item context-menu-subitem" onclick="insertCodeBit(this);closeQueryWindowContextMenu();" value="%I%">%LABEL%</li>
+-->
+</div>
+
+<div class="inline-templates" id="codeBitContextHeaderTpl">
+<!--
+	<li class="context-menu-item context-menu-subitem context-menu-header">%LABEL%</li>
+-->
+</div>
+
+<div class="inline-templates" id="editContextTpl">
+<!--
+	<li class="context-menu-item context-menu-subitem" onclick="%ONCLICK%" title="%TITLE%">%LABEL%</li>
+-->
+</div>
+
+<div class="inline-templates" id="disabledOptionTpl">
+<!--
+	<option disabled selected>%LABEL%</option>
+-->
+</div>
+
+<div class="inline-templates" id="completeRequestExportTpl">
+<!--
+server: %SERVER%
+service: %SERVICE% ("%SERVICE_LABEL%")
+query:
+%QUERY%
+URL: %URL%
+-->
+</div>
+
+<div class="inline-templates" id="documentFieldSuggestionsTpl">
+<!--
+	<ul>%ITEMS%</ul>
+-->
+</div>
+
+<div class="inline-templates" id="documentFieldSuggestionTpl">
+<!--
+	<li class="field-suggestion-items" data-field="%FIELD%" title="click to insert; ctrl+click to add insert with &quot;'s"><div>
+		%LABEL% <span class="additional"><span class="operators">[%OPERATORS%]</span> <span class="type">%TYPE%</span> <span class="indexed">%INDEXED%</span></span>
+	</div></li>
+-->
+</div>
+
+<div class="inline-templates" id="jiraNoFormatTpl">
+<!--
+{noformat}
+%QUERY%
+{noformat}
+-->
+</div>
+
+<div class="inline-templates" id="messageCloseTpl">
+<!--
+	&nbsp;<a href="#" onclick="$('#message').fadeOut(100);return false;" class="no-underline">x</a>
+-->
+</div>
+
+<div class="inline-templates" id="cursorPositionTpl">
+<!--
+	[%LINE%,%POS%]
+-->
+</div>
+
+<div class="inline-templates" id="timerListTpl">
+<!--
+	<b>timer</b><span class="symbol link" style="float:right" onclick="$('.timer').toggle();">x</span><br />
+	<div class="small">%QUERY%</div>
+	<div class="small">%SERVER%</div>
+	<ul>%ITEMS%</ul>
+	<div>average: %AVERAGE%ms (%EXEC_COUNT%)</div>
+	<span class="symbol link small" title="copy timer average" onclick="copyTimerAverage();">copy</span>
+	<span class="symbol link small" title="clear timer" onclick="clearTimer();">clear</span>
+<span id="timerClipboard" style="display:none">
+[timer]
+%SERVER% / %QUERY%
+average: %AVERAGE%ms (%EXEC_COUNT% executions)
+</span>
+-->
+</div>
+
+<div class="inline-templates" id="timerCheckpointTpl">
+<!--
+	<li>
+		%EVENT%: %DIFFERENCE%ms
+	</li>	
+-->
+</div>
+
+<div class="inline-templates" id="hashesTpl">
+<!--
+	<b>output hashes</b><span class="symbol link" style="float:right" onclick="$('.hashes').toggle();">x</span><br />
+	<ul>%ITEMS%</ul>
+	<span class="symbol link small" title="clear hashes" onclick="removeOutputHash(null);printOutputHashes();">clear</span>
+-->
+</div>
+
+<div class="inline-templates" id="hashTpl">
+<!--
+	<li class="%CLASS%">
+		%HASH% (%TIMESTAMP%) <span class="symbol link small" title="clear hash" onclick="removeOutputHash(%I%);printOutputHashes();">x</span>
+	</li>	
+-->
+</div>
+
+<div class="inline-templates" id="responseSuccessTpl">
+<!--
+<pre>
+%RESPONSE%
+</pre>
+-->
+</div>
+
+<div class="inline-templates" id="responseErrorTpl">
+<!--
+	<p>
+		<span class="error">error: %ERROR%</span>
+	</p>
+	<p>
+		<span class="message">%MESSAGE%</span>
+	</p>
+	<p>
+		<span class="url">%REQUEST_URI%</span>
+	</p>
+-->
+</div>
+
+<div class="inline-templates" id="otherFormatsMessageTpl">
+<!--
+<p>
+	results in formats other than JSON and html are opened in a new window.<br />
+	tell your browser to allow this page to open popups.<br />
+	(content-type: %MIME%}
+</p>
+-->
+</div>
+
