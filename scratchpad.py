@@ -3,7 +3,7 @@ import requests
 import json
 import urllib
 from flask import Flask
-from flask import request, make_response, render_template
+from flask import request, make_response, render_template, stream_with_context, Response
 from os import environ
 from urllib.parse import urlparse
 
@@ -27,11 +27,16 @@ try:
 except Exception as e:
 	listening_port = 80
 
+try:
+	public_nba_address = environ['PUBLIC_NBA_ADDRESS']
+except Exception as e:
+	public_nba_address = nba_address
+	
 base_url = 'http://' + nba_address + ':' + nba_port
 
 @app.route('/')
 def root():
-   	return render_template('index.html',nba_address=nba_address,nba_port=nba_port)
+   	return render_template('index.html',nba_address=public_nba_address,nba_port=nba_port)
 	
 @app.route('/proxy/', methods=['GET','POST'])
 def proxy():
@@ -39,27 +44,23 @@ def proxy():
 		nba_request=request.form['query']
 	else:
 		nba_request=request.args.get('query', '')
-		
-	nba_request=urllib.request.unquote(nba_request);
 
 	if len(nba_request.strip())==0:
 		return 'no nba request'
-		
-	urlparts = urlparse(nba_request)
 	
 	try:
-		if len(urlparts.query)==0:
-			r = requests.get(base_url+urlparts.path,timeout=nba_request_timeout)
-		else:
-			r = requests.post(base_url+urlparts.path,timeout=nba_request_timeout, data=urllib.parse.parse_qs(urlparts.query))
+		r = requests.get(base_url+nba_request,timeout=nba_request_timeout)
 
 		response = make_response(r.content)
-		response.headers['content-type'] = 'application/json; charset=utf-8'
+		response.headers['content-type'] = r.headers.get('content-type')
+
+		if (r.headers.get('content-type')=='application/zip'):
+			response.headers['content-disposition'] = r.headers.get('content-disposition')
 
 		return response	
+
 	except Exception as e:
 		return 'request error: ' + str(e)
 		
 if __name__ == "__main__":
 	app.run(host="0.0.0.0", port=int(listening_port))
-

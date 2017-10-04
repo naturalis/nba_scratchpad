@@ -146,8 +146,9 @@ $(document).ready(function(e)
 		<br />
 		<input title="run altered query" type="button" onclick="setCustomRequest();openRequest();" value="run altered query"/>
 		<span title="query run options" class="results">
-			<a title="open in new window" class="resultUrl" href="" target="_blank">open in new window</a> <span class="divider">|</span>
-			<a title="open in same window" class="resultUrl" href="" id="thisUrl" target="nbaTest">open in same window</a> <span class="divider">|</span>
+			direct NBA link: <a title="open in new window" class="resultUrl" href="" target="_blank">new window</a> <span class="divider">|</span>
+			<a title="open in same window" class="resultUrl" href="" id="thisUrl" target="nbaTest">re-use window</a> <span class="divider">|</span>
+
 			<span title="clear results" class="link" onclick="clearResults();" />clear results</span> <span class="divider">|</span>
 			<span title="copy URL" class="link" onclick="copyToClipboard($('#thisUrl').attr('href'));setMessage('copied link to clipboard');" />copy URL</span>
 			

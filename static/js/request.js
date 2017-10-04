@@ -17,6 +17,7 @@ function openRequest()
 	
 	if ( server.proxyPath )
 	{
+		var directUrl=requestUrl.replace( server.url, server.nbaServer );
 		createProxyRequest();
 	}
 
@@ -26,6 +27,7 @@ function openRequest()
 		{
 			setMessage( "unable to force POST", );
 		}
+		console.log(requestUrl);
 		timerCheckpoint( QUERY_EXECUTION, 'request response' );
 		timerShow( QUERY_EXECUTION );
 		$("<a>", {href: requestUrl, download: "filename.zip" }).appendTo("body")[0].click();
@@ -195,7 +197,15 @@ function openRequest()
 	$.ajax( p );	
 
 
-	$('.resultUrl').attr("href",requestUrl);
+	if ("undefined" === typeof directUrl) 
+	{
+		$('.resultUrl').attr("href",requestUrl);
+	}
+	else
+	{
+		$('.resultUrl').attr("href",directUrl);
+	}
+	
 	$('.results').toggle(true);
 
 	if (alwaysRunQueryInOwnWindow===true)

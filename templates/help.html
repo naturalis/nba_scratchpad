@@ -3,19 +3,27 @@
 		<span class="helpHeader">help</span> <span class="link windowClose" onclick="helpToggle();">X</span><br />
 	</div>
 	<div id="helpBody">
-		<p class="helpSubHeader">
-			You can click and drag the header to move this window to a position of your liking. Click the 'X' top right to close. Click and hold the bold topics to highlight the corresponding item in the form.
-		</p>
 		<p>
 			<b class="section-header">General</b><br />
-			This tool allows you to build an NBA-query and execute it by accessing the URL. Queries can be stored in the local storage of your browser, and will survive across sessions (and emptying your cache, most likely). However, they do not work in private sessions and are not available across different browsers, so if you have queries you really want to hang on to, make sure to save them somewhere else as well.
+			This tool helps you to build NBA-queries, execute them and store them for re-use. It is not a true query-builder, but rather a collection of functions that makes it easier to understand what a query should look like, helps you construct and test them, and examine their resulting output. Before you start, it might be good to get acquainted with the NBA:
+			<ul>
+			  <li><a href="https://science.naturalis.nl/en/ict/products/data-api/" target="_blank">Netherlands Biodiversity API @ science.naturalis.nl</a></li>
+			  <li><a href="http://docs.biodiversitydata.nl/" target="_blank">docs.biodiversitydata.nl</a></li>
+			  <li><a href="http://bioportal.naturalis.nl/node/3?language=en&back" target="_blank">API description in BioPortal</a></li>
+			</ul>
+			Saved queries will be stored in the local storage of your browser, and will survive across sessions (and emptying your cache, most likely). However, they do not work in private sessions and are not available across different browsers, so if you have queries you really want to hang on to, make sure to save them somewhere else as well.<br />
+			Please note that for reasaons of technical convenience, this program uses a proxy for communicating with the NBA server. If you want to use the NBA directly, you can access it at <a href="" class="directNbaPath" target="_blank"></a>.
+		</p>
+		<p>
+			<b class="section-header">About this help</b><br />
+			You can click and drag the header to move this window to a position of your liking. Click the 'X' top right to close.<br />
+			Click and hold the bold topics to highlight the corresponding item in the main screen.
 		</p>
 		<p>
 			<b class="section-header">Writing & running queries</b><br />
 			<B>Service list</b><br />
 			List of services available in NBAv2. Each item shows the actual path of the query, an optional [name] and an optional %-sign to indicate that the service requires html-encoded queries, or a - to indicate that a service doesn't expect a query. The list of services is automatically retrieved from the NBA server.<br />
 			Note: the %-sign is just for information - you don't have to do any encoding yourself; the application will take care of it.<br />
-			
 		</p>
 		<p>
 			<b>Server status</b><br />
@@ -175,7 +183,6 @@
 				<li>Ctrl+s: save current query with highlighted query-name (disabled by default).</li>
 				<li class="no-dot divider"></li>
 				<li class="no-dot">access keys (shortcuts to page-elements):</li>
-				<li>q: <b>server list</b></li>
 				<li>w: <b>service list</b></li>
 				<li>a: <b>query window</b></li>
 				<li>z: <b>type to find field name</b></li>
@@ -225,6 +232,7 @@
 			<ul>
 				<li>No paste option in query-window context menu</li>
 				<li>Suppressing non-indexed fields in the suggestion list prohibits adding those fields to the "fields" parameter.</li>
+				<li>Help for <b>search by XPath for JSON</b> is missing.</li>
 			</ul>
 		</p>
 	</div>

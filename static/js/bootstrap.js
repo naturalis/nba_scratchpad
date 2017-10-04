@@ -278,6 +278,9 @@ function bootstrapSupportWindows()
 
 	$( '#notesDiv' ).draggable({ handle: '#notesName' });
 	$( '#helpDiv' ).draggable({ handle: '#helpHeader' });
+	
+	$( '.directNbaPath' ).html(server.directNbaPath).attr("href",server.directNbaPath);
+
 }
 
 function bindKeys()

@@ -43,6 +43,7 @@ function setFixedServer( p )
 	p.testpath = p.nbaServer + "/v2/"
 	p.noServices = false;
 	p.allowCrossDomain = true;
+	p.directNbaPath=p.nbaServer + "/v2/";
 	server=p;
 	$('#servers').html( p.url );
 }
