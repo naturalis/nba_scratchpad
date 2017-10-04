@@ -28,7 +28,7 @@ except Exception as e:
 	listening_port = 80
 
 try:
-	public_nba_address = environ['PUBLIC_NBA_ADDRESS']
+	public_nba_address = environ['PUBLIC_NBA_FULL_ADDRESS']
 except Exception as e:
 	public_nba_address = nba_address
 	
@@ -36,7 +36,7 @@ base_url = 'http://' + nba_address + ':' + nba_port
 
 @app.route('/')
 def root():
-   	return render_template('index.html',nba_address=public_nba_address,nba_port=nba_port)
+   	return render_template('index.html',nba_address=public_nba_address)
 	
 @app.route('/proxy/', methods=['GET','POST'])
 def proxy():
