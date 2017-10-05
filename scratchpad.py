@@ -30,7 +30,7 @@ except Exception as e:
 try:
 	public_nba_address = environ['PUBLIC_NBA_FULL_ADDRESS']
 except Exception as e:
-	public_nba_address = nba_address
+	public_nba_address = 'api.biodiversitydata.nl';
 	
 base_url = 'http://' + nba_address + ':' + nba_port
 
