@@ -34,10 +34,11 @@ except Exception as e:
 	
 base_url = 'http://' + nba_address + ':' + nba_port
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def root():
-   	return render_template('index.html',nba_address=public_nba_address)
-	
+	predef_query=request.args.get('_querySpec', '')
+	return render_template('index.html',nba_address=public_nba_address,predef_query=predef_query)
+
 @app.route('/proxy/', methods=['GET','POST'])
 def proxy():
 	if request.method == 'POST':

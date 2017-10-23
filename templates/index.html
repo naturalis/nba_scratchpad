@@ -29,7 +29,7 @@
 <script src="{{ url_for('static', filename='js/results.js') }}"></script>
 <script src="{{ url_for('static', filename='js/hashes.js') }}"></script>
 <script src="{{ url_for('static', filename='js/jsonpath-0.8.0.js') }}"></script>
-<script src="{{ url_for('static', filename='js/xpathjson.js') }}""></script>
+<script src="{{ url_for('static', filename='js/xpathjson.js') }}"></script>
 
 <link rel="stylesheet" type="text/css" media="screen" title="default" href="{{ url_for('static', filename='css/inline_templates.css') }}" />
 <link rel="stylesheet" type="text/css" media="screen" title="default" href="{{ url_for('static', filename='css/jquery-ui.css') }}" />
@@ -81,6 +81,7 @@ $(document).ready(function(e)
 		drawQueryIndex();
 	}
 
+	loadPredefQuery( '{{ predef_query|tojson|safe }}' );
 	enablePage();
 	togglePurlAcceptHeaders();
 });

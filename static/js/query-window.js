@@ -239,3 +239,16 @@ function queryVerifyJsonValidity()
 		return false;
 	}
 }
+
+function loadPredefQuery( query )
+{
+	if ( $("#query").val().length==0 )
+	{
+		$("#query").val( query.replace(/(^[\s"]*|[\s"]*$)/g, '') );
+	}
+	// altering the URL without reloading for bookmarking purposes
+	//var stateObj = { foo: "bar" };
+	//window.history.pushState(stateObj, "" , "/" );
+}
+
+
