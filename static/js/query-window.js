@@ -242,6 +242,8 @@ function queryVerifyJsonValidity()
 
 function loadPredefQuery( query )
 {
+	if (query.length==0) return;
+	
 	if ( $("#query").val().length==0 )
 	{
 		$("#query").val( query.replace(/(^[\s"]*|[\s"]*$)/g, '') );
