@@ -36,15 +36,9 @@ try:
 except Exception as e:
 	listener_base_path = '/scratchpad';
 
-static_folder='static'
-
-# configurable, but also requires the physical moving of the contents of 'static' to whatever 'static_folder' becomes
-if listener_base_path:
-	static_folder=listener_base_path.lstrip("/")+"/"+static_folder
-
-app = Flask(__name__,static_folder=static_folder)
-	
 base_url = 'http://' + nba_address + ':' + nba_port
+
+app = Flask(__name__,static_folder='scratchpad/static')
 
 @app.route(listener_base_path + '/', methods=['GET'])
 def root():
