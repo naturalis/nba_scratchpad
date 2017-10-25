@@ -14,9 +14,7 @@ function tidyQuerystring( raw )
 
 function tidyQueryWindow()
 {
-	var t=$('#query').val();
-	t=tidyQuerystring( t )
-	$('#query').val( t );
+	$('#query').val( tidyQuerystring( $('#query').val() ) );
 }
 
 function fixEmptyQuery()
@@ -52,12 +50,12 @@ function showCaretPosition()
 		pos=tPos-(i==0?0:matches[i-1]);
 		if (tPos<=matches[i]) break
 	}
-	$('#cursor-position').html( fetchTemplate('cursorPositionTpl').replace('%LINE%',line+1).replace('%POS%',pos));
+	$('#cursor-position').html( fetchTemplate('cursorPositionTpl').replace('%LINE%',line+1).replace('%POS%',pos) );
 }
 	
 function decodeQuery()
 {
-	$('#query').val(decodeURIComponent($('#query').val()));
+	$('#query').val( decodeURIComponent($('#query').val()) );
 }
 
 function insertStringInQueryWindow( str )
@@ -116,7 +114,7 @@ function addSlashes()
 		var str =$('#query').val().substring(startPos,endPos);
 		if ( ctrlPressed )
 		{
-			insertStringInQueryWindow( str.replace(/"/g, '\\"').replace(/\n/g, '').replace(/(\s)+/g, ' ') );
+			insertStringInQueryWindow( str.replace(/"/g, '\\"').replace(/\n/g, "").replace(/(\s)+/g, " ") );
 		}
 		else
 		if ( shiftPressed )
@@ -242,11 +240,14 @@ function queryVerifyJsonValidity()
 
 function loadPredefQuery( query )
 {
+	// stripping JSON outer double-quotes (and spaces)
+	query=query.replace(/(^[\s"]*|[\s"]*$)/g, "");
+
 	if (query.length==0) return;
-	
+
 	if ( $("#query").val().length==0 )
 	{
-		$("#query").val( query.replace(/(^[\s"]*|[\s"]*$)/g, '') );
+		$("#query").val( query );
 	}
 	// altering the URL without reloading for bookmarking purposes
 	//var stateObj = { foo: "bar" };
