@@ -7,8 +7,6 @@ from flask import request, make_response, render_template, stream_with_context, 
 from os import environ
 from urllib.parse import urlparse
 
-app = Flask(__name__)
-
 try:
 	nba_address = environ['NBA_ADDRESS']
 	nba_port = environ['NBA_PORT']
@@ -37,6 +35,14 @@ try:
 	listener_base_path.rstrip("/");
 except Exception as e:
 	listener_base_path = '/scratchpad';
+
+static_folder='static'
+
+# configurable, but also requires the physical moving of the contents of 'static' to whatever 'static_folder' becomes
+if listener_base_path:
+	static_folder=listener_base_path.lstrip("/")+"/"+static_folder
+
+app = Flask(__name__,static_folder=static_folder)
 	
 base_url = 'http://' + nba_address + ':' + nba_port
 
