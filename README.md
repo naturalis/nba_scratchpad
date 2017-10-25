@@ -11,6 +11,6 @@ Environment variables:
 + PUBLIC_NBA_FULL_ADDRESS: IP or domain + port of the NBA Server, as seen from the client (for direct links; defaults to NBA_ADDRESS)  
 
 Usage:
-+ access NBA Scratchpad: http://<SERVER ADDRESS>:80/scratchpad/
++ access NBA Scratchpad: http://&lt;SERVER ADDRESS&gt;:80/scratchpad/
 + F2 opens help file
-+ start Scratchpad with an external qieru (useful for linking example from documentation):  http://<SERVER ADDRESS>:80/scratchpad/?_querySpec=<query>
++ start Scratchpad with an external qieru (useful for linking example from documentation):  http://&lt;SERVER ADDRESS&gt;:80/scratchpad/?_querySpec=&lt;query&gt;
