@@ -30,18 +30,22 @@ except Exception as e:
 try:
 	public_nba_address = environ['PUBLIC_NBA_FULL_ADDRESS']
 except Exception as e:
-	public_nba_address = 'api.biodiversitydata.nl';
+	public_nba_address = 'api.biodiversitydata.nl'
 
 try:
 	listener_base_path = environ['LISTENER_BASE_PATH']
-	listener_base_path.rstrip("/");
+	listener_base_path.rstrip("/")
+	if len(listener_base_path)==0:
+		raise Exception('empty base path')
 except Exception as e:
-	listener_base_path = '/scratchpad';
+	listener_base_path = '/scratchpad'
+
 
 base_url = 'http://' + nba_address + ':' + nba_port
 
 app = Flask(__name__)
 app.config["APPLICATION_ROOT"] = listener_base_path
+
 
 ##### <--
 @app.route('/', methods=['GET'])
