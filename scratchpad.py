@@ -32,14 +32,20 @@ try:
 except Exception as e:
 	public_nba_address = 'api.biodiversitydata.nl';
 	
+try:
+	listener_base_path = environ['LISTENER_BASE_PATH']
+	listener_base_path.rstrip("/");
+except Exception as e:
+	listener_base_path = '/scratchpad';
+	
 base_url = 'http://' + nba_address + ':' + nba_port
 
-@app.route('/', methods=['GET'])
+@app.route(listener_base_path + '/', methods=['GET'])
 def root():
 	predef_query=request.args.get('_querySpec', '')
-	return render_template('index.html',nba_address=public_nba_address,predef_query=predef_query)
+	return render_template('index.html',nba_address=public_nba_address,predef_query=predef_query,listener_base_path=listener_base_path)
 
-@app.route('/proxy/', methods=['GET','POST'])
+@app.route(listener_base_path + '/proxy/', methods=['GET','POST'])
 def proxy():
 	if request.method == 'POST':
 		nba_request=request.form['query']
