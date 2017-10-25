@@ -47,7 +47,7 @@ $(document).ready(function(e)
 	//initServers();
 	//populateServers();
 	//setServer();
-	setFixedServer( { url: window.location.protocol + "//" + window.location.host, proxyPath: "{{ listener_base_path }}/proxy/?query=", nbaServer: window.location.protocol + "//{{ nba_address }}" } );
+	setFixedServer( { url: window.location.protocol + "//" + window.location.host, proxyPath: "{{ url_for('proxy', query='') }}", nbaServer: window.location.protocol + "//{{ nba_address }}" } );
 	getServices();
 	addStaticServices();
 	populateServices();
