@@ -13,4 +13,4 @@ Environment variables:
 Usage:
 + access NBA Scratchpad: http://&lt;SERVER ADDRESS&gt;:80/scratchpad/
 + F2 opens help file
-+ start Scratchpad with an external qieru (useful for linking example from documentation):  http://&lt;SERVER ADDRESS&gt;:80/scratchpad/?_querySpec=&lt;query&gt;
++ start Scratchpad with an external query (useful for linking example from documentation):  http://&lt;SERVER ADDRESS&gt;:80/scratchpad/?_querySpec=&lt;query&gt;
