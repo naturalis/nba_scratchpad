@@ -16,4 +16,6 @@ after_success:
   - docker push naturalis/nba_scratchpad:$DOCKER_TAG
   - docker logout
 
-  
+branches:
+  only:
+  - master
