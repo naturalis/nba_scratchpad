@@ -77,6 +77,8 @@ function processServiceList( serviceList )
 		{
 			if (serviceIndex.indexOf(f.key)==-1)
 			{
+				cloneHumanReadable = f.cloneHumanReadable;
+				delete f.cloneHumanReadable;
 				services.push( f );
 				serviceIndex.push( f.key );
 			}
@@ -91,7 +93,7 @@ function processServiceList( serviceList )
 				}
 			}
 			
-			if ( f.hasQuerySpec )
+			if ( f.hasQuerySpec && cloneHumanReadable==true )
 			{
 				// clone object and make it into a 'human readable' service
 				var copy=jQuery.extend({}, f);
@@ -142,6 +144,7 @@ function parseService( s )
 	var lastPart=pathParts.pop();
 	var	secondPart=pathParts.shift();
 
+	var cloneHumanReadable = true;
 	
 	if (secondPart=="save") return;
 	
@@ -150,10 +153,16 @@ function parseService( s )
 		var noQuery=true;
 	}
 	else
-	if (lastPart && (lastPart=="query" || lastPart=="querySpecial" || lastPart=="count" || lastPart=="groupByScientificName"))
+	if (lastPart && (lastPart=="query" || lastPart=="querySpecial" || lastPart=="count" || lastPart=="groupByScientificName" || lastPart=="download"))
 	{
 		path=path+"/?_querySpec=";
 		var hasQuerySpec=true;
+
+		if (lastPart=="download")
+		{
+			cloneHumanReadable = false;
+		}
+
 	}
 	else
 	if (lastPart && lastPart.substr(0,1)==lastPart.substr(0,1).toUpperCase())
@@ -210,7 +219,8 @@ function parseService( s )
 		path: path,
 		method: [ s.method ],
 		sort: sort,
-		default: (sort=="a0" && hasQuerySpec)
+		default: (sort=="a0" && hasQuerySpec),
+		cloneHumanReadable: cloneHumanReadable
 	};
 	
 	if (noQuery) service.noQuery=noQuery;
