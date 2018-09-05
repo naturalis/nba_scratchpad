@@ -7,7 +7,7 @@ var nbaServerConfig={
 	}
 }
 
-var nonDocumentPathRoots=[ "metadata", "ping", "release-notes", "reference-doc" ];
+var nonDocumentPathRoots=[ "metadata", "ping", "release-notes", "reference-doc", "import-files" ];
 
 var queryOperators=["=","EQUALS","EQUALS_IC", "STARTS_WITH","STARTS_WITH_IC",">","GT",">=","GTE","IN","LIKE","<","LT","<=","LTE","BETWEEN","MATCHES","!=","NOT_EQUALS","NOT_EQUALS_IC","NOT_STARTS_WITH","NOT_STARTS_WITH_IC","NOT_IN","NOT_LIKE","NOT_BETWEEN","NOT_MATCHES"];
             
