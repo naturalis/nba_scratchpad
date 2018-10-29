@@ -1,5 +1,5 @@
 var application = {
-	name: "NBAv2 query scratch pad", //"NBAv2 REST query tool",
+	name: "Query scratchpad for the Netherlands Biodoversity API", //"NBAv2 REST query tool",
 	version: "2.x", // version is retrieved from version history table
 	date: "2017", // date retrieved from version history table
 	author: "maarten schermer",
@@ -30,6 +30,7 @@ var alwaysRunQueryInOwnWindow=false;
 var findOnlyRelevantFields=true;
 var clearFieldFindInputAfterSelect=true;
 var includeNonSearchableDocumentFields=false;
+var startSelectedServiceIndex;
 var availableFields=[];
 var usingDefaultRestServiceLists=false;
 var lastLoadedSavedQueryName="";
@@ -102,7 +103,7 @@ function selectServiceByHashCode( hashCode )
 	var s=getServiceByHashCode(hashCode);
 	if (s)
 	{
-		$('#services').val(s.index);
+		$('#services').val(s.index).trigger('change');
 	}
 }
 
@@ -169,7 +170,7 @@ function getRequestUrl()
 		var baseurl = server.url;
 	}
 
-	return baseurl + service.path + ( service.noQuery ? '' : ( service.encodeQuery ? queryEncoded : query ));
+	return baseurl + ( service.pathExtended ? service.pathExtended : service.path ) + ( service.noQuery ? '' : ( service.encodeQuery ? queryEncoded : query ));
 }
 
 function makeRequest()
@@ -557,6 +558,7 @@ function runQuery()
 	tidyQueryWindow();
 	fixEmptyQuery();
 	readQuery();
+	parseRESTparamsFromQueryWindow();
 
 	if (doNotVerifyQueryJson || queryVerifyJsonValidity())
 	{

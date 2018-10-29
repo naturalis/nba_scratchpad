@@ -14,7 +14,9 @@ function tidyQuerystring( raw )
 
 function tidyQueryWindow()
 {
-	$('#query').val( tidyQuerystring( $('#query').val() ) );
+	var t=$('#query').val();
+	t=tidyQuerystring( t )
+	$('#query').val( t );
 }
 
 function fixEmptyQuery()
@@ -114,7 +116,7 @@ function addSlashes()
 		var str =$('#query').val().substring(startPos,endPos);
 		if ( ctrlPressed )
 		{
-			insertStringInQueryWindow( str.replace(/"/g, '\\"').replace(/\n/g, "").replace(/(\s)+/g, " ") );
+			insertStringInQueryWindow( str.replace(/"/g, '\\"').replace(/\n/g, '').replace(/(\s)+/g, ' ') );
 		}
 		else
 		if ( shiftPressed )
@@ -218,6 +220,49 @@ function readQuery()
 	query=removeQueryComments( query );
 }
 
+function parseRESTparamsFromQueryWindow()
+{
+
+	if (!service.RESTQueryCombi) return;
+
+	// var regex = /\{([^}]*)\}/g;
+	// var q = query.match(regex);
+
+	if (query.indexOf("{")>-1)
+	{
+		var q = query.substring(query.indexOf("{")).trim();
+	}
+	else
+	{
+		var q = "";
+	}
+
+	service.pathExtended=service.path;
+
+	var params = query.replace(q,'').trim();
+	params = params.split("/");
+
+	for(var i=0;i<params.length;i++)
+	{
+		if (service.RESTParams && service.RESTParams[i])
+		{
+			service.pathExtended += params[i] + "/";
+			// console.log("substituting '" + params[i] + "' for " + service.RESTParams[i]);
+		}
+	}
+
+	query = q;
+
+	if (query.length>0) 
+	{
+		service.pathExtended=service.pathExtended+"?_querySpec=";
+	}
+
+	// console.log(service);
+	// console.log(query);
+	// console.log(params);
+}
+
 function queryVerifyJsonValidity()
 {
 	if (query.length==0) return true; // empty query
@@ -253,5 +298,3 @@ function loadPredefQuery( query )
 	//var stateObj = { foo: "bar" };
 	//window.history.pushState(stateObj, "" , "/" );
 }
-
-

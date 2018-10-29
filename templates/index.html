@@ -51,7 +51,8 @@ $(document).ready(function(e)
 	getServices();
 	addStaticServices();
 	populateServices();
-	setService();	
+	setService();
+	setServiceHint();
 	getDataModels();
 	displayFullUrl();
 	setServerStatusLink();
@@ -109,7 +110,7 @@ $(document).ready(function(e)
 				enablePage();
 				togglePurlAcceptHeaders();"
 				accesskey="q"></select -->
-			<select title="service list" onchange="setService();displayFullUrl();" id="services" accesskey="w"></select>
+			<select title="service list" onchange="setService();setServiceHint();displayFullUrl();" id="services" accesskey="w"></select>
 			<a title="server status" href="" id="serverStatus" target="_new">NBA server root</a>
 			<span title="last server http response code" class="hint" style="margin-left:10px" id="serverResponseCode"></span>
 		</div>

@@ -27,7 +27,7 @@ function openRequest()
 		{
 			setMessage( "unable to force POST", );
 		}
-		console.log(requestUrl);
+		// console.log(requestUrl);
 		timerCheckpoint( QUERY_EXECUTION, 'request response' );
 		timerShow( QUERY_EXECUTION );
 		$("<a>", {href: requestUrl, download: "filename.zip" }).appendTo("body")[0].click();

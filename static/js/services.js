@@ -139,15 +139,17 @@ function parseService( s )
 	// global documentTypes
 	if (documentType.substr(0,1)!="." && documentTypes.indexOf(documentType)==-1) documentTypes.push(documentType);
 
-	var path = "/"+nbaServerConfig.version+s.endPoint.trim().replace(/{(.*)}$/,'');
-
+	var path = s.endPoint.trim().replace(/{(.*)}$/,'');
+	var RESTParams = s.endPoint.trim().replace(path,"").trim();
+	RESTParams = RESTParams.length==0 ? null : RESTParams.split("/");
+	path = "/"+nbaServerConfig.version+path;
 	var lastPart=pathParts.pop();
 	var	secondPart=pathParts.shift();
-
-	var cloneHumanReadable = true;
+	var hasQuerySpec=false;
+	var cloneHumanReadable=true;
 	
 	if (secondPart=="save") return;
-	
+
 	if (documentType.substr(0,1)==".")
 	{
 		var noQuery=true;
@@ -156,7 +158,7 @@ function parseService( s )
 	if (lastPart && (lastPart=="query" || lastPart=="querySpecial" || lastPart=="count" || lastPart=="groupByScientificName" || lastPart=="download"))
 	{
 		path=path+"/?_querySpec=";
-		var hasQuerySpec=true;
+		hasQuerySpec=true;
 
 		if (lastPart=="download")
 		{
@@ -167,7 +169,6 @@ function parseService( s )
 	else
 	if (lastPart && lastPart.substr(0,1)==lastPart.substr(0,1).toUpperCase())
 	{
-		// PhaseOrStage etc -> controlled lists
 		var noQuery=true;
 	}
 	else
@@ -179,6 +180,12 @@ function parseService( s )
 	if (lastPart && lastPart.substr(0,1)=="{" && lastPart.substr(-1)=="}")
 	{
 		var noQuery=false;
+	}
+
+	if (path.indexOf("Distinct") != -1 )
+	{
+		var RESTQueryCombi=true;
+		hasQuerySpec=true;
 	}
 	
 	var sort="";
@@ -222,15 +229,17 @@ function parseService( s )
 		default: (sort=="a0" && hasQuerySpec),
 		cloneHumanReadable: cloneHumanReadable
 	};
-	
 	if (noQuery) service.noQuery=noQuery;
 	if (hasQuerySpec) service.hasQuerySpec=hasQuerySpec;
+	if (RESTQueryCombi) service.RESTQueryCombi=RESTQueryCombi;
+	if (RESTParams) service.RESTParams=RESTParams;
 	if (s.consumes) service.consumes=s.consumes;
 	if (s.produces) service.produces=s.produces;
-	//service.encodeQuery=!noQuery;
+
 	service.encodeQuery=hasQuerySpec;
-	
 	service.key=service.path.trim().hashCode();
+
+	// console.log(service);
 
 	return service;
 }
@@ -306,4 +315,38 @@ function checkForDefaultRestServiceList()
 {
 	if ("undefined" === typeof getDefaultRestServiceLists) return false;
 	return getDefaultRestServiceLists();
+}
+
+function setServiceHint()
+{
+	var ph = "{ query }";
+
+	if (service.noQuery)
+	{
+		ph="";
+	}
+	else
+	if (service.encodeQuery==false && service.RESTParams && service.RESTParams.length>0)
+	{
+		ph = service.RESTParams.join("/");
+	}
+	else
+	if (service.encodeQuery==false)
+	{
+		ph = "name=value";
+	}
+	else
+	if (service.RESTQueryCombi)
+	{
+		if (service.RESTParams.length==1)
+		{
+			ph = "field\n{ query (optional) }";
+		}
+		else
+		{
+			ph = "group/field\n{ query (optional) }";
+		}
+	}
+
+	$("#query").attr("placeholder",ph);
 }
