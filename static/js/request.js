@@ -15,7 +15,13 @@ function openRequest()
 
 	latestResult={};
 	
-	if ( server.proxyPath )
+	if (service.forceNewWindow)
+	{
+		window.open(requestUrl,'alternativeResultWindow');
+		return;
+	}
+
+	if (server.proxyPath)
 	{
 		var directUrl=requestUrl.replace( server.url, server.nbaServer );
 		createProxyRequest();
@@ -30,7 +36,7 @@ function openRequest()
 		// console.log(requestUrl);
 		timerCheckpoint( QUERY_EXECUTION, 'request response' );
 		timerShow( QUERY_EXECUTION );
-		$("<a>", {href: requestUrl, download: "filename.zip" }).appendTo("body")[0].click();
+		$("<a>", {href: requestUrl, download: "filename.zip" }).attr("download","fuck.json").appendTo("body")[0].click();
 		return;
 	}
 	
@@ -215,3 +221,14 @@ function openRequest()
 	
 }
 
+function createProxyRequest( url )
+{
+	if ( url!=undefined && url.length>0 )
+	{
+		return server.url + server.proxyPath + encodeURIComponent( url.replace( server.url, "") );
+	}
+	else
+	{
+		requestUrl = server.url + server.proxyPath + encodeURIComponent( requestUrl.replace( server.url, "") );
+	}
+}

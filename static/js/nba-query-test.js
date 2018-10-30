@@ -152,22 +152,32 @@ function encodeQuery()
 
 function getRequestUrl()
 {
+
+	if(service.forceNewWindow)
+	{
+		var serverUrl = server.nbaServer;	
+	}
+	else
+	{
+		var serverUrl = server.url;			
+	}
+
 	if (service.port)
 	{
 		var u=document.createElement('a');
 		u.href = server.url;
 		if (u.port)
 		{
-			var baseurl = server.url.replace(":"+u.port,":"+service.port)
+			var baseurl = serverUrl.replace(":"+u.port,":"+service.port)
 		}
 		else
 		{
-			var baseurl = server.url.trim().replace(/\/$/, "") + ":"+service.port;
+			var baseurl = serverUrl.trim().replace(/\/$/, "") + ":"+service.port;
 		}
 	}
 	else
 	{
-		var baseurl = server.url;
+		var baseurl = serverUrl;
 	}
 
 	return baseurl + ( service.pathExtended ? service.pathExtended : service.path ) + ( service.noQuery ? '' : ( service.encodeQuery ? queryEncoded : query ));
@@ -569,16 +579,3 @@ function runQuery()
 		openRequest();
 	}
 }
-
-function createProxyRequest( url )
-{
-	if ( url!=undefined && url.length>0 )
-	{
-		return server.url + server.proxyPath + encodeURIComponent( url.replace( server.url, "") );
-	}
-	else
-	{
-		requestUrl = server.url + server.proxyPath + encodeURIComponent( requestUrl.replace( server.url, "") );
-	}
-}
-

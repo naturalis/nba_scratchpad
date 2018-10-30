@@ -112,6 +112,8 @@ function processServiceList( serviceList )
 			}
 		}			
 	}
+
+	// console.dir(services);
 }
 
 function parseService( s )
@@ -147,7 +149,8 @@ function parseService( s )
 	var	secondPart=pathParts.shift();
 	var hasQuerySpec=false;
 	var cloneHumanReadable=true;
-	
+	var forceNewWindow=false;
+
 	if (secondPart=="save") return;
 
 	if (documentType.substr(0,1)==".")
@@ -163,8 +166,8 @@ function parseService( s )
 		if (lastPart=="download")
 		{
 			cloneHumanReadable = false;
+			forceNewWindow = true;
 		}
-
 	}
 	else
 	if (lastPart && lastPart.substr(0,1)==lastPart.substr(0,1).toUpperCase())
@@ -187,7 +190,12 @@ function parseService( s )
 		var RESTQueryCombi=true;
 		hasQuerySpec=true;
 	}
-	
+
+	if(secondPart=="dwca")
+	{
+		forceNewWindow = true;
+	}
+
 	var sort="";
 	if (documentType=="specimen") sort="a";
 	if (documentType=="taxon") sort="b";
@@ -227,7 +235,8 @@ function parseService( s )
 		method: [ s.method ],
 		sort: sort,
 		default: (sort=="a0" && hasQuerySpec),
-		cloneHumanReadable: cloneHumanReadable
+		cloneHumanReadable: cloneHumanReadable,
+		forceNewWindow: forceNewWindow
 	};
 	if (noQuery) service.noQuery=noQuery;
 	if (hasQuerySpec) service.hasQuerySpec=hasQuerySpec;
@@ -238,6 +247,7 @@ function parseService( s )
 
 	service.encodeQuery=hasQuerySpec;
 	service.key=service.path.trim().hashCode();
+	if (noQuery) service.forceNewWindow=false;
 
 	// console.log(service);
 
