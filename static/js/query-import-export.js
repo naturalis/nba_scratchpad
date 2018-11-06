@@ -159,3 +159,18 @@ function queryDeleteSelected()
 	}
 }
 
+function queryQuickExport()
+{
+	var prev=$('#query').val();
+	exportQueryToggleAll(true);
+	queryExport();
+	var buffer=$('#query').val();
+	$('#query').val(prev);
+	var coded = window.btoa(unescape(encodeURIComponent(buffer)));
+	var d = new Date();
+	var temp = $("<a>",
+			{href: "data:application/octet-stream;charset=utf-8;base64,"+coded,
+			download: "nba-queries-"+d.getFullYear()+"."+leftPad(d.getMonth(),2)+"."+leftPad(d.getDate(),2)+".json" }
+		).appendTo("body")[0].click();
+	$(temp).remove();
+}
