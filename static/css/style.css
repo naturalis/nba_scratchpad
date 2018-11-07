@@ -1,6 +1,6 @@
 body {
-	font-family:Consolas;
-	font-size:12px;
+	font-family:Consolas,Monospace;
+	font-size:10.5px;
 	background-color:#fafafa;
 }
 
@@ -129,7 +129,7 @@ select,#servers,#services {
 	max-width:520px;
 }
 
-input[type=button] {
+input[type=button], input[type=file] {
 	font-size:10px;
 	margin-bottom:5px;
 }
@@ -157,6 +157,10 @@ input[type=button] {
 
 .symbol, .setting {
 	color:#999;
+}
+
+.symbol {
+	font-size: 13px;
 }
 
 .queries {
@@ -607,4 +611,16 @@ li.divider {
 	background-color:#eee;
 	height:17px;
 	cursor:move;
+}
+
+.quick-export {
+	margin-bottom: 10px;
+	display: none;
+}
+
+.export.options hr {
+    border: 0;
+    height: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }

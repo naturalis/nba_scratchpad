@@ -3,8 +3,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title></title>
-
 <link rel="shortcut icon" href="{{ url_for('static', filename='css/5028-512.png') }}" />
+
 <script src="{{ url_for('static', filename='js/jquery-3.2.1.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/jquery-ui-1.12.1/jquery-ui.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/jquery.scrollTo-2.1.2/jquery.scrollTo.min.js') }}"></script>
@@ -16,7 +16,7 @@
 <script src="{{ url_for('static', filename='js/defaultRestServiceList.js') }}"></script>
 <script src="{{ url_for('static', filename='js/datamodels.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
-<script src="{{ url_for('static', filename='js/nba-query-test.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 <script src="{{ url_for('static', filename='js/request.js') }}"></script>
 <script src="{{ url_for('static', filename='js/query-window.js') }}"></script>
 <script src="{{ url_for('static', filename='js/query-import-export.js') }}"></script>
@@ -44,9 +44,6 @@ $(document).ready(function(e)
 	disablePage();
 	setApplicationInfo();
 	acquireInlineTemplates();
-	//initServers();
-	//populateServers();
-	//setServer();
 	setFixedServer( { url: window.location.protocol + "//" + window.location.host, proxyPath: "{{ url_for('proxy', query='') }}", nbaServer: window.location.protocol + "//{{ nba_address }}" } );
 	getServices();
 	addStaticServices();
@@ -93,23 +90,6 @@ $(document).ready(function(e)
 
 	<div id="top">
 		<div id="serversandservices">
-			<!-- select id="servers" alt-title="server list" title="server list" onchange="
-				disablePage();
-				rememberSelectedService();
-				setServer();
-				displayFullUrl();
-				setServerStatusLink();
-				setServerSelectTitle();
-				getServices();
-				addStaticServices();
-				populateServices();
-				setService();
-				getDataModels();
-				bootstrapResultWindow();
-				recallSelectedService();
-				enablePage();
-				togglePurlAcceptHeaders();"
-				accesskey="q"></select -->
 			<select title="service list" onchange="setService();setServiceHint();displayFullUrl();" id="services" accesskey="w"></select>
 			<a title="server status" href="" id="serverStatus" target="_new">NBA server root</a>
 			<span title="last server http response code" class="hint" style="margin-left:10px" id="serverResponseCode"></span>
@@ -212,18 +192,29 @@ $(document).ready(function(e)
 			<ul title="saved queries" id="queries" class="queries">
 			</ul>
 
+			<div class="quick-export">
+				<span class="setting link" title="export of all queries as backup" onclick="queryQuickExport();">export all queries</span><br />
+			</div>
+
 			<span class="symbol link export" onclick="$('.export').toggle();exportQueryCount();" title="query maintenance">&#9660;</span>
 			<div class="export options" id="exportOptions">
 				<span class="symbol link" onclick="$('.export').toggle();" title="query maintenance">&#9650;</span>
 				<div class="links">
-					<span class="setting link" title="export selected queries" onclick="queryExport();">export selected queries</span><br />
-					<span class="setting link" title="import queries" onclick="queryImport();">import queries</span><br />
+
+					<div class="setting">
+						<div style="margin-bottom:5px">select query backup file to import:</div>
+						<input type="file" id="file-input"/>
+					</div>
+
+					<hr />
+
+					<span class="setting link" title="export selected queries" onclick="queryExport();">export selected queries to query window</span><br />
+					<span class="setting link" title="import queries" onclick="queryImport();">import queries from query window</span><br />
 					<span class="setting link" title="delete selected queries" onclick="queryDeleteSelected();">delete selected queries</span><br />
 					<span class="setting link additional" title="select all" onclick="exportQueryToggleAll(true);">select all</span> / 
 					<span class="setting link additional" title="select none" onclick="exportQueryToggleAll(false);">none</span>
 					<span class="setting additional">(<span class="export-query-count">0</span>)</span><br />
-					<span class="setting link" title="all queries quick export" onclick="queryQuickExport();">quick export</span>
-					
+
 					<hr />
 
 					<span class="setting link" title="toggle query window context menu" onclick="queryWindowContextToggle();">toggle context menu</span><br />

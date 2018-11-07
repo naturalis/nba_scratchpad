@@ -222,7 +222,6 @@ function readQuery()
 
 function parseRESTparamsFromQueryWindow()
 {
-
 	if (!service.RESTQueryCombi) return;
 
 	// var regex = /\{([^}]*)\}/g;
@@ -267,6 +266,10 @@ function queryVerifyJsonValidity()
 {
 	if (query.length==0) return true; // empty query
 	if (query.indexOf('{')==-1 && query.indexOf('}')==-1) return true; // HR query
+	if (service.RESTQueryCombi==true)
+	{
+		if (query.indexOf('{')==-1 && query.indexOf('}')==-1) return true; // HR query
+	}
 
 	try {
 		var t=tidyQuerystring( query );

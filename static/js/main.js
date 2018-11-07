@@ -370,6 +370,14 @@ function drawQueryIndex()
 	{
 		$('#'+$(this).attr('id').replace('group-','count-')).html($(this).children().length);
     });
+
+    $('.quick-export').toggle(queryIndex.length>0);
+
+	$('#file-input').on('change',function(e)
+	{
+		readUploadFile( e );
+	});
+
 }
 
 function useQuery( number )

@@ -81,38 +81,30 @@
 <!--
 {
   "conditions" : [
-    { "field" : "gatheringEvent.country", "operator" : "EQUALS_IC", "value" : "Nederland", "boost": 2.0,
-      "or" : [
-        { "field" : "gatheringEvent.country", "operator" : "EQUALS_IC", "value" : "Netherlands", "boost": 0.5 },
-        { "field" : "gatheringEvent.country", "operator" : "EQUALS_IC", "value" : "Netherlands, The", "boost": 1 }
-       ]
-    },
-    { "field" : "kindOfUnit", "operator" : "EQUALS_IC", "value" : "EGG"
-    },
-    { "field" : "identifications.taxonRank", "operator" : "EQUALS_IC", "value" : "species",
-      "and" : [
-         { "field" : "identifications.scientificName.genusOrMonomial", "operator" : "EQUALS_IC", "value" : "corvus" }
-       ]
-    }
+    { "field" : "gatheringEvent.country", "operator" : "EQUALS_IC", "value" : "Netherlands", "boost": 0.5 },
+    { "field" : "phaseOrStage", "operator" : "EQUALS_IC", "value" : "EGG" },
+    { "field" : "identifications.taxonRank", "operator" : "EQUALS_IC", "value" : "species" },
+    { "field" : "identifications.scientificName.genusOrMonomial", "operator" : "EQUALS_IC", "value" : "harpyia" },
+    { "field" : "gatheringEvent.dateTimeBegin", "operator" : "BETWEEN", "value" : ["1900-01-01","1980-11-11"] }
   ],
   "logicalOperator" : "AND",
-  "fields" : ["gatheringEvent.dateTimeBegin","gatheringEvent.locality","identifications.scientificName","kindOfUnit"],
+  "fields" : ["gatheringEvent.dateTimeBegin","gatheringEvent.locality","identifications.scientificName","phaseOrStage"],
   "sortFields" : [ { "path" : "unitID", "sortOrder" : "desc" } ],
   "from" : 0,
-  "size" : 5
+  "size" : 50
 }
+-->
+</div>
+
+<div class="inline-templates" id="exampleQueryHrTpl">
+<!--
+sourceSystem.code=NSR&taxonRank=species&_logicalOperator=AND&_from=0&_size=100
 -->
 </div>
 
 <div class="inline-templates" id="emptyQueryTpl">
 <!--
 {}
--->
-</div>
-
-<div class="inline-templates" id="exampleQueryHrTpl">
-<!--
-sourceSystem.code=NSR&taxonRank=species&_from=100&_logicalOperator=AND
 -->
 </div>
 

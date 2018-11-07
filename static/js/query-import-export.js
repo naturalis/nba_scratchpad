@@ -91,12 +91,28 @@ function queryExport()
 	$('#query').val(JSON.stringify(exp));
 }
 
-function queryImport()
+function queryImport( raw )
 {
-	var raw=$('#query').val().trim();
-	
-	if (raw.length==0) return;
-	
+	if (!raw)
+	{
+		raw=$('#query').val().trim();	
+	}
+
+	raw = removeQueryComments(raw);
+
+	if (raw.length==0)
+	{
+		return;
+	}
+
+	try
+	{
+		JSON.parse(raw);	
+	} catch (err) {
+		alert( "can't import queries:\n" + err );
+		return;
+	}
+
 	if (confirm("are you sure you want to import?"))
 	{
 		try {
@@ -164,13 +180,38 @@ function queryQuickExport()
 	var prev=$('#query').val();
 	exportQueryToggleAll(true);
 	queryExport();
+
+	var d = new Date();
+	var date_string = d.getFullYear()+"."+leftPad(d.getMonth(),2)+"."+leftPad(d.getDate(),2);
 	var buffer=$('#query').val();
 	$('#query').val(prev);
+
+	buffer =
+		"//nba query scratchpad export ("+date_string+")\n" + 
+		"//to import, open scratchpad (http://api.biodiversitydata.nl/scratchpad/), copy/paste the contents of this file into the query window, access query maintenance by clicking ▼, and click 'import queries'.\n" + 
+		buffer;
+
 	var coded = window.btoa(unescape(encodeURIComponent(buffer)));
-	var d = new Date();
 	var temp = $("<a>",
-			{href: "data:application/octet-stream;charset=utf-8;base64,"+coded,
-			download: "nba-queries-"+d.getFullYear()+"."+leftPad(d.getMonth(),2)+"."+leftPad(d.getDate(),2)+".json" }
+		{
+			href: "data:application/octet-stream;charset=utf-8;base64,"+coded,
+			download: "nba-scratchpad-queries--"+date_string+".json"
+		}
 		).appendTo("body")[0].click();
+
 	$(temp).remove();
+}
+
+function readUploadFile( e )
+{
+	var file = e.target.files[0];
+	if (!file) return;
+	var reader = new FileReader();
+	reader.onload = function(e)
+	{
+		var contents = e.target.result;
+		queryImport( contents );
+		$('.export').toggle();
+	};
+	reader.readAsText(file);
 }
