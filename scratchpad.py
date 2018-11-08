@@ -51,7 +51,9 @@ app.config["APPLICATION_ROOT"] = listener_base_path
 @app.route('/', methods=['GET'])
 def root():
 	predef_query=request.args.get('_querySpec', '')
-	return render_template('index.html',nba_address=public_nba_address,predef_query=predef_query,listener_base_path=listener_base_path)
+	execute_query=request.args.get('execute_query', '')
+	strip_url=request.args.get('strip_url', '')
+	return render_template('index.html',nba_address=public_nba_address,predef_query=predef_query,listener_base_path=listener_base_path,execute_query=execute_query,strip_url=strip_url)
 
 @app.route('/proxy/', methods=['GET','POST'])
 def proxy():

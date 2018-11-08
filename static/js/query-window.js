@@ -286,7 +286,7 @@ function queryVerifyJsonValidity()
 	}
 }
 
-function loadPredefQuery( query )
+function loadPredefQuery( query, auto_execute, strip_url )
 {
 	// stripping JSON outer double-quotes (and spaces)
 	query=query.replace(/(^[\s"]*|[\s"]*$)/g, "");
@@ -296,8 +296,16 @@ function loadPredefQuery( query )
 	if ( $("#query").val().length==0 )
 	{
 		$("#query").val( query );
+		if (auto_execute=='1')
+		{
+			$('#query-trigger').trigger('click');
+		}
 	}
-	// altering the URL without reloading for bookmarking purposes
-	//var stateObj = { foo: "bar" };
-	//window.history.pushState(stateObj, "" , "/" );
+
+	if (strip_url=='1')
+	{
+		// altering the URL without reloading (for bookmarking purposes)
+		var stateObj = { foo: "bar" };
+		window.history.pushState(stateObj, "" , "/scratchpad/" );
+	}
 }

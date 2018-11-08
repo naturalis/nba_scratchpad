@@ -78,8 +78,17 @@ $(document).ready(function(e)
 		checkExampleQueries();
 		drawQueryIndex();
 	}
-
-	loadPredefQuery( '{{ predef_query|tojson|safe }}' );
+	{#
+	/*
+		for auto-loading & executing a query call scratchpad with:
+			_querySpec={query}	encoded queryspec-query
+			execute_query=1		to automatically execute the loaded query (default is false)
+			strip_url=1			to rewrite the URL in the browser to the base URL (to prevent people from bookmarking an autoexecuting query; default is false)
+		example:
+		http://api.biodiversitydata.nl/scratchpad/?_querySpec={%20%22conditions%22%20:%20[%20{%20%22field%22%20:%20%22sourceSystem.code%22,%20%22operator%22%20:%20%22=%22,%20%22value%22%20:%20%22CRS%22%20}]}&execute_query=1
+	*/
+	#}
+	loadPredefQuery( '{{ predef_query|tojson|safe }}','{{ execute_query }}','{{ strip_url }}' );
 	enablePage();
 	togglePurlAcceptHeaders();
 });
