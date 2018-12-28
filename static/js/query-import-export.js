@@ -212,6 +212,7 @@ function readUploadFile( e )
 		var contents = e.target.result;
 		queryImport( contents );
 		$('.export').toggle();
+		amLoadingBackup = false;
 	};
 	reader.readAsText(file);
 }
