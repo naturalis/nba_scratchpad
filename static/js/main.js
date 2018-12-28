@@ -36,6 +36,7 @@ var usingDefaultRestServiceLists=false;
 var lastLoadedSavedQueryName="";
 var latestResult={};
 var selectedAcceptHeaders=[];
+var amLoadingBackup = false;
 
 function setFixedServer( p )
 {
@@ -373,10 +374,14 @@ function drawQueryIndex()
 
     $('.quick-export').toggle(queryIndex.length>0);
 
-	$('#file-input').on('change',function(e)
-	{
-		readUploadFile( e );
-	});
+    $('#file-input').on('change',function(e)
+    {
+        if (!amLoadingBackup)
+        {
+            amLoadingBackup = true;
+            readUploadFile( e );
+        }
+    });
 
 }
 
