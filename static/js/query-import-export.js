@@ -182,7 +182,7 @@ function queryQuickExport()
 	queryExport();
 
 	var d = new Date();
-	var date_string = d.getFullYear()+"."+leftPad(d.getMonth(),2)+"."+leftPad(d.getDate(),2);
+	var date_string = d.getFullYear()+"."+leftPad(d.getMonth()+1,2)+"."+leftPad(d.getDate(),2);
 	var buffer=$('#query').val();
 	$('#query').val(prev);
 
