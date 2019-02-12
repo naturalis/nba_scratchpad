@@ -112,8 +112,6 @@ function processServiceList( serviceList )
 			}
 		}			
 	}
-
-	// console.dir(services);
 }
 
 function parseService( s )
@@ -280,6 +278,9 @@ function addStaticServices()
 
 function populateServices()
 {
+
+	var serviceIndices=["s","t","m","g","."];
+
 	$('#services').find('option').remove();
 
 	for(var i=0;i<services.length;i++)
@@ -300,6 +301,17 @@ function populateServices()
 		
 		if (s.path)
 		{
+			var firstChar=s.document.substring(0,1);
+			var key=serviceIndices.indexOf(firstChar);
+			if (key!=-1)
+			{
+				serviceIndices.splice(key, 1);
+			}
+			else
+			{
+				firstChar=false;
+			}
+
 		    $('#services').append(
 				fetchTemplate( 'serviceTpl' )
 					.replace('%INDEX%',s.index)
@@ -309,6 +321,7 @@ function populateServices()
 					.replace('%ENCODED%',(s.encodeQuery ? ' &percnt;' : '' ))
 					.replace('%NO_QUERY%',(s.noQuery ? ' -' : '' ))
 					.replace('%ORIGIN%',(usingDefaultRestServiceLists ? '   &lt;read from default service list&gt;' : '' ))
+					.replace('%INDEX_KEY%',(firstChar ? ' data-index="'+firstChar+'"' : "" ))
 				);
 
 			services[i].hashCode=s.path.trim().hashCode();
@@ -359,4 +372,9 @@ function setServiceHint()
 	}
 
 	$("#query").attr("placeholder",ph);
+}
+
+function jumpToServiceIndex( char )
+{
+	$('#services option[data-index="'+altGrKeyToServiceMapping[String(char)]+'"]').prop('selected', true)
 }

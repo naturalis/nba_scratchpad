@@ -292,10 +292,13 @@ function bindKeys()
 		{
 			shiftPressed=true;
 		} 
-		else
 		if (e.keyCode==17) // ctrl
 		{
 			ctrlPressed=true;
+		} 
+		if (e.keyCode==225) // altGr
+		{
+			altGrPressed=true;
 		} 
 		/*
 		apparently, alt works differently ("stays down", sort of)
@@ -305,7 +308,7 @@ function bindKeys()
 			altPressed=true;
 		}
 		*/
-		else
+
 		if (e.altKey && e.keyCode==38) // alt+up
 		{
 			switchServerIndex(true);
@@ -329,19 +332,22 @@ function bindKeys()
 		{
 			shiftPressed=false;
 		} 
-
 		if (e.keyCode==17) // ctrl
 		{
 			ctrlPressed=false;
 		}
+		if (e.keyCode==225) // altGr
+		{
+			altGrPressed=false;
+		} 
 
-		if (e.keyCode==113) // F2
+		if (e.keyCode==113 && altGrPressed==false) // F2
 		{
 			e.preventDefault();
 			helpToggle();
 		}
 		else
-		if (e.keyCode==115) // F4
+		if (e.keyCode==115 && altGrPressed==false) // F4
 		{
 			e.preventDefault();
 			linksToggle();
@@ -378,6 +384,15 @@ function bindKeys()
 		{
 			$('#documentFieldsSearch').focus();
 		}		
+		else
+		if (altGrPressed==true)
+		{
+			// AltGr + F1/2/3/4/5
+			if (Object.keys(altGrKeyToServiceMapping).indexOf(String(e.keyCode))!=-1)
+			{
+				jumpToServiceIndex(e.keyCode);
+			}
+		}
 	});
 
 }
